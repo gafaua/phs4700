@@ -4,10 +4,10 @@ classdef CentreMasse
   
   methods (Static = true)
     function cm = CentreMasseTotal(pos, mu)
-      posBras = cm_bras();
-      posMoteurs = cm_moteurs();
-      posSphere = cm_sphere();
-      posColis = cm_colis();
+      posBras = CentreMasse.cm_bras();
+      posMoteurs = CentreMasse.cm_moteurs();
+      posSphere = CentreMasse.cm_sphere();
+      posColis = CentreMasse.cm_colis();
       
       posX = ((posBras(1) * (Constantes.masse_bras * 4)) + (posMoteurs(1) * (Constantes.masse_moteur * 4)) + (posSphere(1) * Constantes.masse_sphere) + (posColis(1) * Constantes.masse_colis)) / (Constantes.masse_sphere + Constantes.masse_bras * 4 + Constantes.masse_moteur * 4 + Constantes.masse_colis)
       posY = ((posBras(2) * (Constantes.masse_bras * 4)) + (posMoteurs(2) * (Constantes.masse_moteur * 4)) + (posSphere(2) * Constantes.masse_sphere) + (posColis(2) * Constantes.masse_colis)) / (Constantes.masse_sphere + Constantes.masse_bras * 4 + Constantes.masse_moteur * 4 + Constantes.masse_colis)
@@ -15,7 +15,7 @@ classdef CentreMasse
       
       CM_tot = [posX; posY; posZ];
       CM_pos = pos + CM_tot;
-      CM_rot = apply_rotation(CM_pos, mu)
+      CM_rot = CentreMasse.apply_rotation(CM_pos, mu)
       cm = CM_rot;
     endfunction
   
@@ -42,7 +42,7 @@ classdef CentreMasse
     endfunction
     
     function newPos = apply_rotation(pos, mu)
-      matRot = get_matrice_rotY(mu);
+      matRot = CentreMasse.get_matrice_rotY(mu);
       newPos = matRot * pos;
     endfunction
     
