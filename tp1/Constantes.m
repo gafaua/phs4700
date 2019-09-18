@@ -3,7 +3,7 @@ classdef Constantes
     %drone (demi-sphere)
     masse_sphere = 1.5;
     rayon_sphere = 0.3;
-    CM_sphere = [0 0 (3*(Constantes.rayon_sphere))/8];
+    CM_sphere = [0 0 (3*(rayon_sphere))/8];
     
     %bras - (cylindres) (x4)
     masse_bras = 0.2;
