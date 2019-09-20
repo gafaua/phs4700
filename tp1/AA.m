@@ -16,7 +16,4 @@ classdef AA
             mf = MF_1 + MF_2 + MF_3 + MF_4;
         endfunction
     endmethods
-
-
-
 endclassdef
