@@ -46,7 +46,7 @@ classdef MomentInertie
                 MIy = (1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared)
                 MIz = (1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared)
             else
-                MIx = 1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared)
+                MIx = (1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared)
                 MIy = Constantes.masse_bras * rayonSquared
                 MIz = (1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared)
             end
