@@ -3,7 +3,7 @@ classdef CentreMasse
   endproperties
   
   methods (Static = true)
-    function cm = CentreMasseTotal(pos, mu)
+    function cm = CMTotal(pos, mu)
       posBras = CentreMasse.cm_bras();
       posMoteurs = CentreMasse.cm_moteurs();
       posSphere = CentreMasse.cm_sphere();
@@ -14,9 +14,9 @@ classdef CentreMasse
       posZ = ((posBras(3) * (Constantes.masse_bras * 4)) + (posMoteurs(3) * (Constantes.masse_moteur * 4)) + (posSphere(3) * Constantes.masse_sphere) + (posColis(3) * Constantes.masse_colis)) / (Constantes.masse_sphere + Constantes.masse_bras * 4 + Constantes.masse_moteur * 4 + Constantes.masse_colis)
       
       CM_tot = [posX; posY; posZ];
-      CM_pos = pos + CM_tot;
-      CM_rot = CentreMasse.apply_rotation(CM_pos, mu)
-      cm = CM_rot;
+      CM_rot = CentreMasse.apply_rotation(CM_tot, mu)
+      CM_pos = pos + CM_rot;
+      cm = CM_pos;
     endfunction
   
     function cm = cm_bras() 
