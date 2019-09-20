@@ -57,10 +57,14 @@ classdef MomentInertie
 
         endfunction
 
-        function calculerLeFuckingInertie(centreDeMasse)
-            masseTotale = Constantes.masse_colis + Constantes.masse_moteur * 4 + Constantes.masse_sphere + Constantes.masse_bras * 4
+        function distanceCM = vecteurEntreCm(centreMasseTotal, centreMasseObjet)
+            distanceX = centreMasseTotal(1) - centreMasseObjet(1)
+            distanceY = centreMasseTotal(2) - centreMasseObjet(2)
+            distanceZ = centreMasseTotal(3) - centreMasseObjet(3)
 
-            
+            distanceCM = [distanceX distanceY distanceZ]
+
+        endfunction
 
     endmethods
 
