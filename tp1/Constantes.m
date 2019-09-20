@@ -15,9 +15,10 @@ classdef Constantes
     rayon_moteur = 0.05;
     masse_moteur = 0.4;
     Fmax = 25;
+    distance_moteur = 0.15 + 0.5 + 0.025;
 
     %colis - parallélépipède
-    CM_colis = [0 0.1 -0.125];
+    CM_colis = [0; 0.1; -0.125];
     masse_colis = 1.2;
     longueur_colis = 0.7;
     largeur_colis = 0.4;
