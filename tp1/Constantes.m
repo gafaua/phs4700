@@ -17,7 +17,7 @@ classdef Constantes
     Fmax = 25;
 
     %colis - parallélépipède
-    CM_colis = [0 0.1 -0.125];
+    CM_colis = [0; 0.1; -0.125];
     masse_colis = 1.2;
     longueur_colis = 0.7;
     largeur_colis = 0.4;
