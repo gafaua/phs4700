@@ -1,94 +1,85 @@
 classdef MomentInertie
+    methods(Static = true)
+        % Calcul du moment d'inertie du système.
+        function mi = MI()
+            % Obtention du PCM avant translation et rotation
+            pcm = CentreMasse.CM(0, 0);
+            
+            [miBras1, miBras2, miBras3, miBras4] = MomentInertie.MIBras(pcm);
+            [miMoteur1, miMoteur2, miMoteur3, miMoteur4] = MomentInertie.MIMoteur(pcm);
 
-    properties
-    endproperties
-
-    methods (Static = true)
-        function momentInertieTotal = calculerInertieTotal(mu)
-            [bras1 bras2 bras3 bras4] = MomentInertie.centreMasseObjet(Constantes.rayon_bras, Constantes.longueur_bras / 2);
-            [moteur1 moteur2 moteur3 moteur4] = MomentInertie.centreMasseObjet(Constantes.hauteur_moteur / 2, Constantes.longueur_bras + Constantes.rayon_moteur);
-            centreMasseSphere = CentreMasse.cm_sphere();
-            centreMasseColis = CentreMasse.cm_colis();
-
-            inertieDemiSphere = MomentInertie.calculerMIDemisphere() + Constantes.masse_sphere * MomentInertie.calculerEcartInertie(centreMasseSphere);
-            inertieColis = MomentInertie.calculerMIparralelepipede() + Constantes.masse_colis * MomentInertie.calculerEcartInertie(centreMasseColis);
-
-            inertieBras1 = MomentInertie.calculerMIBras(true)  + Constantes.masse_bras * MomentInertie.calculerEcartInertie(bras1);
-            inertieBras2 = MomentInertie.calculerMIBras(false) + Constantes.masse_bras * MomentInertie.calculerEcartInertie(bras2);
-            inertieBras3 = MomentInertie.calculerMIBras(true)  + Constantes.masse_bras * MomentInertie.calculerEcartInertie(bras3);
-            inertieBras4 = MomentInertie.calculerMIBras(false) + Constantes.masse_bras * MomentInertie.calculerEcartInertie(bras4);
-
-            inertieMoteur1 = MomentInertie.calculerMIMoteur() + Constantes.masse_moteur * MomentInertie.calculerEcartInertie(moteur1);
-            inertieMoteur2 = MomentInertie.calculerMIMoteur() + Constantes.masse_moteur * MomentInertie.calculerEcartInertie(moteur2);
-            inertieMoteur3 = MomentInertie.calculerMIMoteur() + Constantes.masse_moteur * MomentInertie.calculerEcartInertie(moteur3);
-            inertieMoteur4 = MomentInertie.calculerMIMoteur() + Constantes.masse_moteur * MomentInertie.calculerEcartInertie(moteur4);
-
-            MI = inertieDemiSphere + inertieColis + inertieBras1 + inertieBras2 + inertieBras3 + inertieBras4 + inertieMoteur1 + inertieMoteur2 + inertieMoteur3 + inertieMoteur4;
-            R2 = [cos(mu), 0, sin(mu); 0, 1, 0; -sin(mu), 0, cos(mu)];
-            momentInertieTotal = R2 * MI * R2';
+            mi = MomentInertie.MIDemiSphere(pcm) + ...
+                 miBras1 + miBras2 + miBras3 + miBras4 + ...
+                 miMoteur1 + miMoteur2 + miMoteur3 + miMoteur4 + ...
+                 MomentInertie.MIColis(pcm);
         endfunction
 
-        function demiSphereMI = calculerMIDemisphere()
-            matrix = [83/320 0 0; 0 83/320 0; 0 0 2/5];
-            rayonSquared = Constantes.rayon_sphere^2;
-            demiSphereMI = matrix * Constantes.masse_sphere * rayonSquared;
+        % Moment d'inertie de la demi sphere.
+        function miDSphere = MIDemiSphere(pcm)
+            matInertie = diag([83/320, 83/320, 2/5]);
+
+            % Moment d'inertie dsphere local
+            miDSphereLocal = matInertie * ...
+                             Constantes.MASSE_DSPHERE * ...
+                             Constantes.RAYON_DSPHERE ^ 2;
+
+            % Moment d'inertie dsphere global
+            miDSphere  = miDSphereLocal + ... 
+                         Constantes.MASSE_DSPHERE * MomentInertie.CalculerTDC(Constantes.CM_DSPHERE - pcm);
         endfunction
 
-        function brasMI = calculerMIBras(isOnx)
-            rayonSquared = Constantes.rayon_bras^2;
-            longueurSquared = Constantes.longueur_bras^2;
-            MIx = 0;
-            MIy = 0;
-            MIz = 0;
+        % Moment d'inertie des bras du drone
+        function [miBras1, miBras2, miBras3, miBras4] = MIBras(pcm)
+            axePrincipale = Constantes.RAYON_BRAS ^ 2;
+            axeSecondaire = (Constantes.RAYON_BRAS ^ 2) / 2 + (Constantes.LONGUEUR_BRAS ^ 2) / 12;
+            miBrasXLocal = diag([axePrincipale, axeSecondaire, axeSecondaire]) * Constantes.MASSE_BRAS;
+            miBrasYLocal = diag([axeSecondaire, axePrincipale, axeSecondaire]) * Constantes.MASSE_BRAS;
 
-            if isOnx == true
-                MIx = Constantes.masse_bras * rayonSquared;
-                MIy = (1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared);
-                MIz = (1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared);
-            else
-                MIx = (1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared);
-                MIy = Constantes.masse_bras * rayonSquared;
-                MIz = (1/2 * Constantes.masse_bras * rayonSquared) + (1/12 * Constantes.masse_bras * longueurSquared);
-            end
-
-            brasMI = [MIx  0 0; 0 MIy 0; 0 0 MIz];
+            [cmBras1, cmBras2, cmBras3, cmBras4] = CentreMasse.CMObjet(Constantes.RAYON_BRAS, ...
+                                                                       Constantes.RAYON_DSPHERE + Constantes.LONGUEUR_BRAS / 2);
+            miBras1 = miBrasXLocal + Constantes.MASSE_BRAS * MomentInertie.CalculerTDC(cmBras1 - pcm);
+            miBras2 = miBrasYLocal + Constantes.MASSE_BRAS * MomentInertie.CalculerTDC(cmBras2 - pcm);
+            miBras3 = miBrasXLocal + Constantes.MASSE_BRAS * MomentInertie.CalculerTDC(cmBras3 - pcm);
+            miBras4 = miBrasYLocal + Constantes.MASSE_BRAS * MomentInertie.CalculerTDC(cmBras4 - pcm);
         endfunction
 
-        function moteurMI = calculerMIMoteur()
-            rayonSquared = Constantes.rayon_moteur^2;
-            hauteurSquared = Constantes.hauteur_moteur^2;
+        % Moment d'inertie des moteurs.
+        function [miMoteur1, miMoteur2, miMoteur3, miMoteur4] = MIMoteur(pcm)
+            axePrincipale = (Constantes.RAYON_MOTEUR ^ 2) / 2;
+            axeSecondaire = (Constantes.RAYON_MOTEUR ^ 2) / 4 + (Constantes.HAUTEUR_MOTEUR ^ 2) / 12;
+            miMoteurLocal = diag([axeSecondaire, axeSecondaire, axePrincipale]) * Constantes.MASSE_MOTEUR;
 
-            MIx = (1/4 * Constantes.masse_moteur * rayonSquared) + (1/12 * Constantes.masse_moteur * hauteurSquared);
-            MIy = (1/4 * Constantes.masse_moteur * rayonSquared) + (1/12 * Constantes.masse_moteur * hauteurSquared);
-            MIz = 1/2 * Constantes.masse_moteur * rayonSquared;
-
-            moteurMI = [MIx 0 0; 0 MIy 0; 0 0 MIz];
+            [cmMoteur1, cmMoteur2, cmMoteur3, cmMoteur4] = CentreMasse.CMObjet(Constantes.HAUTEUR_MOTEUR / 2, ...
+                                                                               Constantes.RAYON_DSPHERE + Constantes.LONGUEUR_BRAS + Constantes.RAYON_MOTEUR);
+            miMoteur1 = miMoteurLocal + Constantes.MASSE_MOTEUR * MomentInertie.CalculerTDC(cmMoteur1 - pcm);
+            miMoteur2 = miMoteurLocal + Constantes.MASSE_MOTEUR * MomentInertie.CalculerTDC(cmMoteur2 - pcm);
+            miMoteur3 = miMoteurLocal + Constantes.MASSE_MOTEUR * MomentInertie.CalculerTDC(cmMoteur3 - pcm);
+            miMoteur4 = miMoteurLocal + Constantes.MASSE_MOTEUR * MomentInertie.CalculerTDC(cmMoteur4 - pcm);
         endfunction
 
-        function parralelepipedeMI = calculerMIparralelepipede()
-            largeurSquared = Constantes.largeur_colis^2;
-            longueurSquared = Constantes.longueur_colis^2;
-            hauteurSquared = Constantes.hauteur_colis^2;
+        % Moment d'inertie du colis.
+        function miColis = MIColis(pcm)
+            longueurCarree = Constantes.LONGUEUR_COLIS ^ 2;
+            largeurCarree = Constantes.LARGEUR_COLIS ^ 2;
+            hauteurCarree = Constantes.HAUTEUR_COLIS ^ 2;
+            matInertie = diag([largeurCarree + hauteurCarree, ...
+                               longueurCarree + hauteurCarree, ...
+                               longueurCarree + largeurCarree]);
 
-            MIx = 1/12 * Constantes.masse_colis * (longueurSquared + hauteurSquared);
-            MIy = 1/12 * Constantes.masse_colis * (largeurSquared + hauteurSquared);
-            MIz = 1/12 * Constantes.masse_colis * (largeurSquared + longueurSquared);
+            % Moment d'inertie olis local
+            miColisLocal = matInertie * Constantes.MASSE_COLIS / 12;
 
-            parralelepipedeMI = [MIx 0 0; 0 MIy 0; 0 0 MIz];
+            % Moment d'inertie colis global
+            miColis = miColisLocal + ...
+                      Constantes.MASSE_COLIS * MomentInertie.CalculerTDC(Constantes.CM_COLIS - pcm);
         endfunction
 
-        function [obj1 obj2 obj3 obj4] = centreMasseObjet(rayon, longueur)
-            distance = Constantes.rayon_sphere + longueur;
-            obj1 = [distance; 0; rayon];
-            obj2 = [0; distance; rayon];
-            obj3 = [-distance; 0; rayon];
-            obj4 = [0; -distance; rayon];
-        endfunction
-
-        function ecartInertie = calculerEcartInertie(vecteur)
-            ecartInertie = [vecteur(2)^2 + vecteur(3)^2, -vecteur(1)*vecteur(2), -vecteur(1)*vecteur(3); 
-                            -vecteur(2)*vecteur(1), vecteur(1)^2 + vecteur(3)^2, -vecteur(2)*vecteur(3);
-                            -vecteur(3)*vecteur(1), -vecteur(3)*vecteur(2), vecteur(1)^2 + vecteur(2)^2];
+        % Calcul de la matrice selon le DC obtenu à partir de rc.
+        % Notes de cours chapitre 2 page 72.
+        function matDC = CalculerTDC(dc)
+            matDC = [dc(2) ^ 2 + dc(3) ^ 2, -dc(1) * dc(2), -dc(1) * dc(3); ...
+                     -dc(2) * dc(1), dc(1) ^ 2 + dc(3) ^ 2, -dc(2) * dc(3); ...
+                     -dc(3) * dc(1), -dc(3) * dc(2), dc(1) ^ 2 + dc(2) ^ 2];
         endfunction
     endmethods
-end
+endclassdef

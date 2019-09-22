@@ -1,9 +1,9 @@
 classdef Constantes
   properties (Constant)
     %drone (demi-sphere)
-    MASSE_SPHERE = 1.5;
-    RAYON_SPHERE = 0.3;
-    CM_SPHERE = [0; 0; (3*(0.3))/8];
+    MASSE_DSPHERE = 1.5;
+    RAYON_DSPHERE = 0.3;
+    CM_DSPHERE = [0; 0; (3*(0.3))/8];
 
     %bras - (cylindres) (x4)
     MASSE_BRAS = 0.2;
