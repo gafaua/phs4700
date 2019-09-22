@@ -1,68 +1,35 @@
 classdef CentreMasse
-  properties
-  endproperties
-  
-  methods (Static = true)
-    function cm = CMTotal(pos, mu)
-      posBras = CentreMasse.cm_bras();
-      posMoteurs = CentreMasse.cm_moteurs();
-      posSphere = CentreMasse.cm_sphere();
-      posColis = CentreMasse.cm_colis();
-      
-      posX = ((posBras(1) * (Constantes.masse_bras * 4)) + ...
-              (posMoteurs(1) * (Constantes.masse_moteur * 4)) + ...
-              (posSphere(1) * Constantes.masse_sphere) + ...
-              (posColis(1) * Constantes.masse_colis) ...
-             ) / ...
-            (Constantes.masse_sphere + Constantes.masse_bras * 4 + Constantes.masse_moteur * 4 + Constantes.masse_colis);
+    methods(Static = true)
+        % Calcul du CM total du drone.
+        function cm = CM(pos, mu)
+            sommeMasses = (Constantes.MASSE_SPHERE + ...
+                           Constantes.MASSE_BRAS * 4 + ....
+                           Constantes.MASSE_MOTEUR * 4 + ...
+                           Constantes.MASSE_COLIS);
+            [cmBras1, cmBras2, cmBras3, cmBras4] = CentreMasse.CMObjet(Constantes.RAYON_BRAS, ...
+                                                                       Constantes.RAYON_SPHERE + Constantes.LONGUEUR_BRAS / 2, ...
+                                                                       Constantes.MASSE_BRAS);
+            [cmMoteur1, cmMoteur2, cmMoteur3, cmMoteur4] = CentreMasse.CMObjet(Constantes.HAUTEUR_MOTEUR / 2, ...
+                                                                               Constantes.RAYON_SPHERE + Constantes.LONGUEUR_BRAS + Constantes.RAYON_MOTEUR, ...
+                                                                               Constantes.MASSE_MOTEUR);
+            sommeCM = Constantes.CM_SPHERE * Constantes.MASSE_SPHERE + ...
+                      cmBras1 + cmBras2 + cmBras3 + cmBras4 + ...
+                      cmMoteur1 + cmMoteur2 + cmMoteur3 + cmMoteur4 + ...
+                      Constantes.CM_COLIS * Constantes.MASSE_COLIS;
+            cmPreRotation = sommeCM / sommeMasses;
 
-      posY = ((posBras(2) * (Constantes.masse_bras * 4)) + ...
-              (posMoteurs(2) * (Constantes.masse_moteur * 4)) + ...
-              (posSphere(2) * Constantes.masse_sphere) + ...
-              (posColis(2) * Constantes.masse_colis) ...
-             ) / ...
-            (Constantes.masse_sphere + Constantes.masse_bras * 4 + Constantes.masse_moteur * 4 + Constantes.masse_colis);
-             
-      posZ = ((posBras(3) * (Constantes.masse_bras * 4)) + ...
-              (posMoteurs(3) * (Constantes.masse_moteur * 4)) + ...
-              (posSphere(3) * Constantes.masse_sphere) + ...
-              (posColis(3) * Constantes.masse_colis) ...
-             ) / ...
-            (Constantes.masse_sphere + Constantes.masse_bras * 4 + Constantes.masse_moteur * 4 + Constantes.masse_colis);
-      
-      CM_tot = [posX; posY; posZ];
-      cm = pos + CentreMasse.apply_rotation(CM_tot, mu);
-    endfunction
-  
-    function cm = cm_bras() 
-      posX = 0;
-      posY = 0;
-      posZ = Constantes.rayon_bras / 2;
-      cm = [posX; posY; posZ];
-    endfunction
-    
-    function cm = cm_sphere()
-      cm = Constantes.CM_sphere;
-    endfunction
-    
-    function cm = cm_moteurs()
-      posX = 0;
-      posY = 0;
-      posZ = Constantes.hauteur_moteur / 2;
-      cm = [posX; posY; posZ];
-    endfunction
-    
-    function cm = cm_colis()
-      cm = Constantes.CM_colis;
-    endfunction
-    
-    function newPos = apply_rotation(pos, mu)
-      matRot = CentreMasse.get_matrice_rotY(mu);
-      newPos = matRot * pos;
-    endfunction
-    
-    function mat = get_matrice_rotY(mu)
-      mat = [cos(mu) 0 sin(mu); 0 1 0; -sin(mu) 0 cos(mu)];
-    endfunction
-  endmethods
+            % Application de la rotation
+            matRot = [cos(mu) 0 sin(mu); 0 1 0; -sin(mu) 0 cos(mu)];
+            cm = pos + matRot * cmPreRotation;
+        endfunction
+
+        % Calcul du CM des objets situés autour de la sphère.
+        function [cmObj1, cmObj2, cmObj3, cmObj4] = CMObjet(hauteur, longueur, masse)
+            distance = Constantes.RAYON_SPHERE + longueur;
+            cmObj1 = [distance; 0; hauteur] * masse;
+            cmObj2 = [0; distance; hauteur] * masse;
+            cmObj3 = [-distance; 0; hauteur] * masse;
+            cmObj4 = [0; -distance; hauteur] * masse;
+        endfunction
+    endmethods
 endclassdef

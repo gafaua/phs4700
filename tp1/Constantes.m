@@ -1,28 +1,28 @@
 classdef Constantes
   properties (Constant)
     %drone (demi-sphere)
-    masse_sphere = 1.5;
-    rayon_sphere = 0.3;
-    CM_sphere = [0; 0; (3*(0.3))/8];
+    MASSE_SPHERE = 1.5;
+    RAYON_SPHERE = 0.3;
+    CM_SPHERE = [0; 0; (3*(0.3))/8];
 
     %bras - (cylindres) (x4)
-    masse_bras = 0.2;
-    longueur_bras = 0.5;
-    rayon_bras = 0.025;
+    MASSE_BRAS = 0.2;
+    LONGUEUR_BRAS = 0.5;
+    RAYON_BRAS = 0.025;
         
     %moteurs - (cylindres) (x4)
-    hauteur_moteur = 0.1;
-    rayon_moteur = 0.05;
-    masse_moteur = 0.4;
-    Fmax = 25;
-    distance_moteur = 0.15 + 0.5 + 0.025;
+    HAUTEUR_MOTEUR = 0.1;
+    RAYON_MOTEUR = 0.05;
+    MASSE_MOTEUR = 0.4;
+    FORCE_MAX = 25;
+    DISTANCE_MOTEUR = 0.15 + 0.5 + 0.025;
 
     %colis - parallélépipède
-    CM_colis = [0; 0.1; -0.125];
-    masse_colis = 1.2;
-    longueur_colis = 0.7;
-    largeur_colis = 0.4;
-    hauteur_colis = 0.25;
+    CM_COLIS = [0; 0.1; -0.125];
+    MASSE_COLIS = 1.2;
+    LONGUEUR_COLIS = 0.7;
+    LARGEUR_COLIS = 0.4;
+    HAUTEUR_COLIS = 0.25;
   endproperties
 endclassdef  
 
