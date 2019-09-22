@@ -24,8 +24,8 @@ classdef CentreMasse
         endfunction
 
         % Calcul du CM des objets situés autour de la sphère.
-        function [cmObj1, cmObj2, cmObj3, cmObj4] = CMObjet(hauteur, longueur, masse)
-            distance = Constantes.RAYON_SPHERE + longueur;
+        function [cmObj1, cmObj2, cmObj3, cmObj4] = CMObjet(hauteur, distanceCentre, masse)
+            distance = Constantes.RAYON_SPHERE + distanceCentre;
             cmObj1 = [distance; 0; hauteur] * masse;
             cmObj2 = [0; distance; hauteur] * masse;
             cmObj3 = [-distance; 0; hauteur] * masse;
