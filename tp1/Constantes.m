@@ -3,7 +3,7 @@ classdef Constantes
     %drone (demi-sphere)
     MASSE_DSPHERE = 1.5;
     RAYON_DSPHERE = 0.3;
-    CM_DSPHERE = [0; 0; (3*(0.3))/8];
+    CM_DSPHERE = [0; 0; 3 * 0.3 / 8];
 
     %bras - (cylindres) (x4)
     MASSE_BRAS = 0.2;
