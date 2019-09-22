@@ -14,8 +14,7 @@ classdef Constantes
     HAUTEUR_MOTEUR = 0.1;
     RAYON_MOTEUR = 0.05;
     MASSE_MOTEUR = 0.4;
-    FORCE_MAX = 25;
-    DISTANCE_MOTEUR = 0.15 + 0.5 + 0.025;
+    FORCE_MOTEUR = 25;
 
     %colis - parallélépipède
     CM_COLIS = [0; 0.1; -0.125];
