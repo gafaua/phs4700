@@ -29,7 +29,7 @@ classdef MomentInertie
         endfunction
 
         function demiSphereMI = calculerMIDemisphere()
-            matrix = [83/320 0 0; 0 83/320 0; 0 0 2/5]
+            matrix = [83/320 0 0; 0 83/320 0; 0 0 2/5];
             rayonSquared = Constantes.rayon_sphere^2;
             demiSphereMI = matrix * Constantes.masse_sphere * rayonSquared;
         endfunction
