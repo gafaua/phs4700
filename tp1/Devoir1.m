@@ -3,6 +3,6 @@ function [pcm, MI, aa] = Devoir1(pos, mu, va, fi)
     pcm = CentreMasse.CM(pos, mu);
     % MI = MomentInertie.calculerInertieTotal(mu);
     MI = MomentInertie.MI();
-    % aa = AA(MI, fi, va);
-    aa = [9; 9; 9];    
+    aa = AccelerationAngulaire.AA(MI, fi, va);
+    % aa = [9; 9; 9];    
 end
