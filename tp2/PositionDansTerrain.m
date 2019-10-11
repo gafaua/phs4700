@@ -5,9 +5,10 @@ classdef Positions
 end
 
 function pos = SurVert(x, y, z)
-    if ((x-92)^2 + (y-53)^2 + (z-(Constantes.VERT_HAUTEUR - Constantes.VERT_RAYON))^2) <= Constantes.VERT_RAYON^2
+    if ((x-Constantes.POSITION_COUPE_X)^2 + (y-Constantes.POSITION_COUPE_Y)^2 +...
+    (z-(Constantes.VERT_HAUTEUR - Constantes.VERT_RAYON))^2) <=...
+    (Constantes.VERT_RAYON + Constantes.BALLE_RAYON)^2
         pos = Positions.vert;
-
 end
 
 function pos = PositionDansTerrain(x, y, z)
@@ -15,12 +16,19 @@ function pos = PositionDansTerrain(x, y, z)
     if x < 0 || y < 0 || x > 110 || y > 70 || (x > 60 && y < 45/50*x)
         pos = Positions.exterieur;
     % verifier si la balle rentre dans la coupe
-    else if x > 93 - Constantes.COUPE_RAYON && x < 93 + Constantes.COUPE_RAYON &&...
-            y > 53 - Constantes.COUPE_RAYON && y < 53 + Constantes.COUPE_RAYON &&...
-            z <= 3.5
+    else if x > Constantes.POSITION_COUPE_X - Constantes.COUPE_RAYON &&...
+            x < Constantes.POSITION_COUPE_X + Constantes.COUPE_RAYON &&...
+            y > Constantes.POSITION_COUPE_Y - Constantes.COUPE_RAYON &&...
+            y < Constantes.POSITION_COUPE_Y + Constantes.COUPE_RAYON &&...
+            z <= Constantes.VERT_HAUTEUR
         pos = Positions.coupe;
     % si au sol: verifier si la balle est sur le sol
     else if y = Constantes.BALLE_RAYON
             
     end;
 end;
+
+function pos = Gravite(pos_i, v_i, t)
+    deltaPos = v_i * t + (0.5 * Constantes.GRAVITE * t^2);
+    pos = pos_i + deltaPos;
+end
