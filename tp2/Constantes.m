@@ -6,6 +6,7 @@ classdef Constantes
         VERT_DIAMETRE = 30;
 
         COUPE_RAYON = 0.054;
+        VERT_RAYON = 237.25 / 7;
 
         #BALLE SPHERIQUE
         BALLE_MASSE = 0.0459;
