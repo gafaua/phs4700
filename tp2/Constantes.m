@@ -4,8 +4,8 @@ classdef Constantes
         %TERRAIN
         TERRAIN_LARGEUR_GAUCHE = 70;
         TERRAIN_LARGEUR_DROITE = 25;
-        TERRAIN_LONGUEUR_HAUT = 110;
-        TERRAIN_LONGUEUR_BAS = 
+        TERRAIN_LONGUEUR_HAUT = 50 + 60;
+        TERRAIN_LONGUEUR_BAS = 50;
         VERT_HAUTEUR = 3.5;
         VERT_DIAMETRE = 30;
 
