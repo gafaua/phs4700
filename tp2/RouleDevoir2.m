@@ -5,7 +5,7 @@ for vit=1:3
     wb0=[0;-45;0];                   % rad/s
   elseif vit == 2
     xy0=[10; 10];                     % m
-    vb0=[26; 16;18.9935]; % m/s
+    vb0=[26; 16; 18.9935]; % m/s
     wb0=[0;0;-87.55];                    % rad/s
   elseif vit == 3
     xy0=[2; 60];                     % m
@@ -50,5 +50,5 @@ for vit=1:3
     % fprintf('Delta Ref                      [%12.8f %12.8f %12.8f]  m \n',rbt(lastt,1)-rbtref(lastt,1),rbt(lastt,2)-rbtref(lastt,2),rbt(lastt,3)-rbtref(lastt,3));
     fprintf('\n\n');
   end
-  pause;
+  % pause;
 end

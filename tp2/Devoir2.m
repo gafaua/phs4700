@@ -23,27 +23,15 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 		% VERIFIER POSITION BALLE
 		pos = PositionBalle(rbtf);
 
-		if strcmp(pos, "exterieur")
-			fprintf('La balle est sortie du terrain \n');
-			break;
-		end
-
-		if rbt(i+1, 3) <= 0
-			fprintf('La balle a touché le sol en dehors du \n');
+		if pos == 3 || rbt(i+1, 3) <= 0
+			coup = pos;
 			break;
 		end
 
 		% TODO: CHECKER SI POSITION EST SUR LA COUPE HAUTEUR
-
-		% UPDATE I
+		
 		i += 1
 	end
-	rbt
-	t
-	vbf
-
-	% UPDATE COUP
-	coup = 2;
 end
 
 function accel = CalculerAcceleration(option, vb, wb) 

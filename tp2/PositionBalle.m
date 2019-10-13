@@ -1,12 +1,12 @@
 function pos = PositionBalle(rbt)
     if DansCoupe(rbt(1), rbt(2))
-        pos = "coupe";
+        pos = 2; % COUPE
     elseif DansVert(rbt(1), rbt(2))
-        pos = "vert";
+        pos = 1; % VERT
     elseif Exterieur(rbt(1), rbt(2))
-        pos = "exterieur";
+        pos = 3; % EXTERIEUR
     else
-        pos = "terrain";
+        pos = 2; % TERRAIN
     end
     % EXPLIQUER QU'ON CHECK JUSTE LE CENTRE DE MASSE
 end
