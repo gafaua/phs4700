@@ -1,9 +1,9 @@
-function pos = PositionBalle(x, y)
-    if DansCoupe(x, y)
+function pos = PositionBalle(rbt)
+    if DansCoupe(rbt(1), rbt(2))
         pos = "coupe";
-    elseif DansVert(x, y)
+    elseif DansVert(rbt(1), rbt(2))
         pos = "vert";
-    elseif Exterieur(x, y)
+    elseif Exterieur(rbt(1), rbt(2))
         pos = "exterieur";
     else
         pos = "terrain";
