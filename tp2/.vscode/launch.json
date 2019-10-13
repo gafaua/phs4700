@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "OctaveDebugger",
+            "request": "launch",
+            "name": "RouleDevoir",
+            // "program": "${command:AskForProgramName}",
+            "program": "RouleDevoir2",
+            "octave": "octave-cli",
+            "sourceFolder": "${workspaceFolder}"
+        },
+        {
+            "type": "OctaveDebugger",
+            "request": "launch",
+            "name": "Function or file to execute.",
+            // "program": "${command:AskForProgramName}",
+            "program": "Devoir2(3, [10; 10], [26.5686; 13.93232; 16.25714], [0;-45;0])",
+            "octave": "octave-cli",
+            "sourceFolder": "${workspaceFolder}"
+        }
+    ]
+}

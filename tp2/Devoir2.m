@@ -1,27 +1,29 @@
 function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
-	rbt = [xy0];
-	vbf = [vb0];
+	rbt = [xy0; 0]';
+	vbf = [vb0]';
 	t = [0];
 
-	deltaT = 0.5;
+	deltaT = 0.1;
 	i = 1;
 
 	while true
-		t(i+1) = t(i) + deltaT;
+		t = [t; t(i) + deltaT];
 
 		% CALCULER ACCELERATION SELON LES FORCES
-		accel = CalculerAcceleration(option);
+		accel = CalculerAcceleration(option, vbf(i,:), wb0');
 
 		% CALCULER VITESSE SELON ACCELERATION
-		vbf(i+1) = v(i) + accel * deltaT;
+		vf = vbf(i,:) + accel * deltaT;
+		vbf = [vbf; vf];
 
 		% CALCULER POSITION SELON VITESSE
-		rbt(i+1) = rbt(i) + vbf(i) * deltaT + 0.5 * accel * deltaT ^ 2;
+		rbtf = rbt(i, :) + vbf(i, :) * deltaT + 0.5 * accel * deltaT ^ 2;
+		rbt = [rbt; rbtf];
 
 		% VERIFIER POSITION BALLE
-		pos = PositionBalle(rbt(i+1));
+		pos = PositionBalle(rbtf);
 
-		if pos == "exterieur"
+		if strcmp(pos, "exterieur")
 			fprintf('La balle est sortie du terrain \n');
 			break;
 		end
@@ -38,17 +40,31 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 	end
 	rbt
 	t
-	vbt
+	vbf
+
+	% UPDATE COUP
+	coup = 2;
 end
 
-function accel = CalculerAcceleration(option) 
+function accel = CalculerAcceleration(option, vb, wb) 
 	m = 0.0459;
-	g = 0.m * [0, 0, -9.8]; % GRAVITY
-	accel = g / m; % a = F / m (deuxieme loi de newton)
+	sF = m * [0, 0, -9.8]; % GRAVITY
 
-	if option == 2
-		% CALCULER AVEC GRAVI + VISQUEUX
-	elseif option == 3
-		% CALCULER AVEC GRAVI + VISQUEUX + MAGNUS
+	if option >= 2
+		A = pi * 0.02135 ^ 2;
+		p = 1.2;
+		Cv = 0.14;
+		sF += - p * Cv * A / 2 * norm(vb) * vb;
 	end
+
+	if option == 3
+		% CALCULER AVEC GRAVITY + VISQUEUX + MAGNUS
+		Cm = 0.000791 * norm(wb);
+		part1 = p * Cm * A / 2 * (norm(vb) ^ 2);
+		crossb = cross(wb, vb);
+		part2 = crossb / norm(crossb);
+		sF += part1 * part2;
+	end
+
+	accel = sF / m; % a = F / m (deuxieme loi de newton)
 end
