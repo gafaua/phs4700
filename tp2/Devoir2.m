@@ -3,7 +3,7 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 	vbf = [vb0]';
 	t = [0];
 
-	deltaT = 0.01;
+	deltaT = 0.001;
 	i = 1;
 
 	while true
@@ -39,19 +39,18 @@ function accel = CalculerAcceleration(option, vb, wb)
 	sF = m * [0, 0, -9.8]; % GRAVITY
 
 	if option >= 2
-		A = pi * 0.02135 ^ 2;
+		A = pi * (0.02135 ^ 2);
 		p = 1.2;
 		Cv = 0.14;
-		sF += - p * Cv * A / 2 * norm(vb) * vb;
+		sF += (-p * Cv * A / 2) * norm(vb) * vb; % VISQUEUX
 	end
 
 	if option == 3
-		% CALCULER AVEC GRAVITY + VISQUEUX + MAGNUS
 		Cm = 0.000791 * norm(wb);
-		part1 = p * Cm * A / 2 * (norm(vb) ^ 2);
+		part1 = (p * Cm * A / 2) * (norm(vb) ^ 2);
 		crossb = cross(wb, vb);
 		part2 = crossb / norm(crossb);
-		sF += part1 * part2;
+		sF += part1 * part2; % MAGNUS
 	end
 
 	accel = sF / m; % a = F / m (deuxieme loi de newton)

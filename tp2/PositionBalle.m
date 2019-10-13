@@ -1,6 +1,6 @@
 function pos = PositionBalle(rbt)
     if DansCoupe(rbt(1), rbt(2))
-        pos = 2; % COUPE
+        pos = 0; % COUPE
     elseif DansVert(rbt(1), rbt(2))
         pos = 1; % VERT
     elseif Exterieur(rbt(1), rbt(2))
