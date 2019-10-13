@@ -1,5 +1,3 @@
-%Cinematic
-
 classdef Cinematique
     methods(Static = true)
         function posXY = DeltaPosXY(v_i, t, a)
@@ -19,5 +17,4 @@ classdef Cinematique
         end
     
     endmethods
-
 endclassdef
