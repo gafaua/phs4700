@@ -3,7 +3,7 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 	vbf = [vb0]';
 	t = [0];
 
-	deltaT = 0.1;
+	deltaT = 0.01;
 	i = 1;
 
 	while true
@@ -29,7 +29,7 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 		end
 
 		% TODO: CHECKER SI POSITION EST SUR LA COUPE HAUTEUR
-		
+
 		i += 1
 	end
 end
