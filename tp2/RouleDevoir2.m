@@ -46,6 +46,9 @@ for vit=1:3
     fprintf('Vitesse finale de la balle     [%12.8f %12.8f %12.8f]  m/s\n',vf(1),vf(2),vf(3));
     fprintf('Position finale de la balle    [%12.8f %12.8f %12.8f]  m \n',rbt(lastt,1),rbt(lastt,2),rbt(lastt,3));
     fprintf('\n\n');
+    Plotter(rbt, vit, option);
   end
-  % pause;
+  pause(3);
+  clf;
 end
+% pause;
