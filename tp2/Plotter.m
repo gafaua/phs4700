@@ -57,9 +57,10 @@ function empty = Plotter(rbt, simulation, option)
 	hold on;
 
     sim = strcat("Simulation ", mat2str(simulation)); 
-    opt = strcat(", option ", mat2str(option)); 
+    % opt = strcat(", option ", mat2str(option)); 
 
-	title (strcat(sim, opt));
+	% title (strcat(sim, opt));
+	title (sim);
 	% pause(1);
-    pause;
+    % pause;
 end
