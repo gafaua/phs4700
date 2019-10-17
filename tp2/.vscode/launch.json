@@ -12,15 +12,6 @@
             "program": "RouleDevoir2",
             "octave": "octave-cli",
             "sourceFolder": "${workspaceFolder}"
-        },
-        {
-            "type": "OctaveDebugger",
-            "request": "launch",
-            "name": "Function or file to execute.",
-            // "program": "${command:AskForProgramName}",
-            "program": "Devoir2(3, [10; 10], [26.5686; 13.93232; 16.25714], [0;-45;0])",
-            "octave": "octave-cli",
-            "sourceFolder": "${workspaceFolder}"
         }
     ]
 }
