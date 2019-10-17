@@ -12,6 +12,14 @@
             "program": "RouleDevoir2",
             "octave": "octave-cli",
             "sourceFolder": "${workspaceFolder}"
+        },
+        {
+            "type": "OctaveDebugger",
+            "request": "launch",
+            "name": "Roule with plots",
+            "program": "RouleDevoir2",
+            "octave": "octave",
+            "sourceFolder": "${workspaceFolder}"
         }
     ]
 }
