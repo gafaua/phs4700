@@ -17,6 +17,8 @@ for vit=1:3
 %
   fprintf('\nSimulation %3d\n',vit);
   for option=1:3
+    fprintf('\n----------------------------------------------------------------------\n');
+    fprintf('Option: %3d \n', option)
     if option == 1
       fprintf('Acceleration gravitationnelle seulement \n');
       type='r-';
@@ -47,6 +49,7 @@ for vit=1:3
     fprintf('Position finale de la balle    [%12.8f %12.8f %12.8f]  m \n',rbt(lastt,1),rbt(lastt,2),rbt(lastt,3));
     fprintf('\n\n');
     Plotter(rbt, vit, option);
+    fprintf('----------------------------------------------------------------------\n');
   end
   pause(3);
   clf;

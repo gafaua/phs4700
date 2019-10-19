@@ -3,7 +3,7 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 	vbf = [vb0]';
 	t = [0];
 
-	dt = 0.001;
+	dt = 0.0001;
 	i = 2;
 
 	pos = 4;
