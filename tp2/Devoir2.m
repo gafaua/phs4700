@@ -1,18 +1,33 @@
 function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
+	dt = 0.001;
+	[coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt); % Solution 1
+
+	rbt0 = rbt;
+	converg = 0;
+	m=1;
+	epsilon = 0.001;
+	while not(converg)
+		dt = dt/2
+		m = m + 1
+		[coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt); % Solution 2
+		[converg Err]=ErrSol(rbt,rbt0,epsilon); % Verifier si l'erreur entre les deux solutions converge
+		rbt0=rbt;
+		if m>3
+            break;
+        end;
+	end;
+	rbt = rbt + Err / 15;
+end
+
+function [coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt)
 	rbt = [xy0', 0.02135];
 	vbf = [vb0]';
 	t = [0];
-
-	dt = 0.0001;
 	i = 2;
-
 	pos = 4;
-
 	while (pos == 4)
 		t = [t; t(i-1) + dt];
-
 		q = [vbf(i-1, :); rbt(i-1, :); wb0'];
-
 		qf = RK4(option, q, dt);
 
 		rbt = [rbt; qf(2, :)];
@@ -20,13 +35,11 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 
 		% Vérifier position balle
 		pos = PositionBalle(rbt(i, :));
-
 		i += 1;
-	end
-	
+	end;
 	coup = pos;
 	vbf = vbf(i-1, :);
-end
+end;
 
 function qf = RK4(option, q, dt)
 	%k1 = g(q(tn-1), tn-1)
@@ -49,13 +62,13 @@ end
 
 function accel = CalculerAcceleration(option, vb, wb) 
 	m = 0.0459;
-	sF = m * [0, 0, -9.8]; % GRAVITY
+	sF = m * [0, 0, -9.8]; % GRAVITE
 
 	if option >= 2
 		A = pi * (0.02135 ^ 2);
 		p = 1.2;
 		Cv = 0.14;
-		sF += (-p * Cv * A / 2) * norm(vb) * vb; % VISQUEUX
+		sF += (-p * Cv * A / 2) * norm(vb) * vb; % FROTTEMENT VISQUEUX
 	end
 
 	if option == 3
@@ -67,4 +80,17 @@ function accel = CalculerAcceleration(option, vb, wb)
 	end
 
 	accel = sF / m; % a = F / m (deuxieme loi de newton)
+end
+
+function [converg Err]=ErrSol(rbt1,rbt0,epsilon) % Verification si solution convergee (inspire du document de reference sur moodle)
+	% converg: variable logique pour convergence
+	%         Err<epsilon pour chaque element
+	% Err : Difference entre rbt1 et rbt0
+	% rbt1: nouvelle solution
+	% rbt0: ancienne solution
+	% epsilon : précision
+	last1 = length(rbt1);
+	last0 = length(rbt0);
+	Err=(rbt1(last1,:)-rbt0(last0,:))
+	converg = Err(1)^2 + Err(2)^2 + Err(3)^2 < epsilon^2;
 end

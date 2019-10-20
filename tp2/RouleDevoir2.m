@@ -12,6 +12,7 @@ for vit=1:3
     vb0=[25; -5; 21]; % m/s
     wb0=[-30; -30; -60];                    % rad/s
   end;
+  % hf = figure();
 %
 %  Tracer terrain et position de la balle de golf 
 %
@@ -51,6 +52,7 @@ for vit=1:3
     Plotter(rbt, vit, option);
     fprintf('----------------------------------------------------------------------\n');
   end
+  % print (hf, ["plot", num2str(vit), ".png"]); %Sauvegarder les plot en png
   pause(3);
   clf;
 end
