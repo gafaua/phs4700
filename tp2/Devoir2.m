@@ -5,10 +5,10 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 	rbt0 = rbt;
 	converg = 0;
 	m=1;
-	epsilon = 0.001;
+	epsilon = [0.001, 0.001, 0.001];
 	while not(converg)
-		dt = dt/2
-		m = m + 1
+		dt = dt/2;
+		m = m + 1;
 		[coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt); % Solution 2
 		[converg Err]=ErrSol(rbt,rbt0,epsilon); % Verifier si l'erreur entre les deux solutions converge
 		rbt0=rbt;
@@ -92,5 +92,9 @@ function [converg Err]=ErrSol(rbt1,rbt0,epsilon) % Verification si solution conv
 	last1 = length(rbt1);
 	last0 = length(rbt0);
 	Err=(rbt1(last1,:)-rbt0(last0,:))
-	converg = Err(1)^2 + Err(2)^2 + Err(3)^2 < epsilon^2;
+	nbelem = length(Err);
+	converg = 1;
+	for i=1:nbelem
+		converg = converg & abs(Err(i)) < epsilon(i);
+	end
 end
