@@ -7,7 +7,7 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 	m=1;
 	epsilon = [0.001, 0.001, 0.001];
 	while not(converg)
-		dt = dt/2;
+		dt = dt/2
 		m = m + 1;
 		[coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt); % Solution 2
 		[converg Err]=ErrSol(rbt,rbt0,epsilon); % Verifier si l'erreur entre les deux solutions converge
@@ -28,7 +28,7 @@ function [coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt)
 	while (pos == 4)
 		t = [t; t(i-1) + dt];
 		q = [vbf(i-1, :); rbt(i-1, :); wb0'];
-		qf = RK4(option, q, dt);
+		qf = RK4(option, q, dt);	%Runge-Kutta
 
 		rbt = [rbt; qf(2, :)];
 		vbf = [vbf; qf(1, :)];
@@ -44,11 +44,11 @@ end;
 function qf = RK4(option, q, dt)
 	%k1 = g(q(tn-1), tn-1)
 	k1 = g(option, q, 0);
-	%k2 = g(q(tn-1) + Deltat/2 * k1, tn-1 + Deltat/2)
+	%k2 = g(q(tn-1) + deltaT/2 * k1, tn-1 + deltaT/2)
 	k2 = g(option, q + k1 * dt/2, dt/2);
-	%k3 = g(q(tn-1) + Deltat/2 * k2, tn-1 + Deltat/2)
+	%k3 = g(q(tn-1) + deltatT/2 * k2, tn-1 + deltaT/2)
 	k3 = g(option, q + k2 * dt/2, dt/2);
-	%k4 = g(q(tn-1) + Deltat * k3, tn-1 + Deltat)
+	%k4 = g(q(tn-1) + deltaT * k3, tn-1 + deltaT)
 	k4 = g(option, q + k3 * dt, dt);
 
 	qf = q + dt/6 * (k1 + 2*k2 + 2*k3 + k4);
@@ -91,7 +91,7 @@ function [converg Err]=ErrSol(rbt1,rbt0,epsilon) % Verification si solution conv
 	% epsilon : précision
 	last1 = length(rbt1);
 	last0 = length(rbt0);
-	Err=(rbt1(last1,:)-rbt0(last0,:))
+	Err=(rbt1(last1,:)-rbt0(last0,:));
 	nbelem = length(Err);
 	converg = 1;
 	for i=1:nbelem

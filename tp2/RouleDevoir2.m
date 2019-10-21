@@ -53,7 +53,6 @@ for vit=1:3
     fprintf('----------------------------------------------------------------------\n');
   end
   % print (hf, ["plot", num2str(vit), ".png"]); %Sauvegarder les plot en png
-  pause(3);
   clf;
 end
 % pause;

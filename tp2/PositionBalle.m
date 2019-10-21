@@ -12,7 +12,6 @@ function pos = PositionBalle(rbt)
     else
         pos = 4; % ENCORE DANS LES AIRS
     end
-    % EXPLIQUER QU'ON CHECK JUSTE LE CENTRE DE MASSE
 end
 
 function dansCoupe = DansCoupe(x, y)
