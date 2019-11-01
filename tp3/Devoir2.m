@@ -2,20 +2,20 @@ function [coup, vbf, t, rbt] = Devoir2(option, xy0, vb0, wb0)
 	dt = 0.001;
 	[coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt); % Solution 1
 
-	rbt0 = rbt;
-	converg = 0;
-	m=1;
-	epsilon = [0.001, 0.001, 0.001];
-	while not(converg)
-		dt = dt/2
-		m = m + 1;
-		[coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt); % Solution 2
-		[converg Err]=ErrSol(rbt,rbt0,epsilon); % Verifier si l'erreur entre les deux solutions converge
-		rbt0=rbt;
-		if m>3
-            break;
-        end;
-	end;
+	% rbt0 = rbt;
+	% converg = 0;
+	% m=1;
+	% epsilon = [0.001, 0.001, 0.001];
+	% while not(converg)
+	% 	dt = dt/2
+	% 	m = m + 1;
+	% 	[coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt); % Solution 2
+	% 	[converg Err]=ErrSol(rbt,rbt0,epsilon); % Verifier si l'erreur entre les deux solutions converge
+	% 	rbt0=rbt;
+	% 	if m>3
+    %         break;
+    %     end;
+	% end;
 	rbt = rbt + Err / 15;
 end
 
