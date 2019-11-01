@@ -1,16 +1,15 @@
 function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl)
 
 dt = 0.001;
-
-
-
+[Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 1
 
 end
 
 
-function [coup, vbf, t, rbt] = CalculerTrajectoire(option, xy0, vb0, wb0, dt)
-	rbt = [xy0', 0.02135];
-	vbf = [vb0]';
+function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt)
+	rbt_bloc = bloci(1,:);
+	vbf_bloc = bloci(2,:);
+    wb0_bloc = bloci(3,:)
 	t = [0];
 	i = 2;
 	pos = 4;
