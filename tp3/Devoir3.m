@@ -3,6 +3,17 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl)
 	dt = 0.001;
 	[Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 1
 
+	% 3 étapes:
+	% 1) Calculer cinématiques
+	%    a) Calculer RK4 pour le bloc
+	%    b) Calculer RK4 pour la balle
+	% 2) Détecter collision
+	%    a) Détecter collision entre balle et sphère bloc
+	%    	a.a) Détecter collision entre balle et bloc
+	%    b) Détecter collision sol
+	%       b.a) Détecter collision balle-sol
+	%       b.b) Détecter collision bloc-sol
+	% 3) Calculer restitution balle-bloc
 end
 
 
