@@ -40,9 +40,19 @@ function collision = Collision(pos_bloc, pos_balle, t, w_bloc)
     collision = 0;
 end
 
-function Plan = CollisionPlan(P1, P2, P3)
+function Plan = CollisionPlan(P1, P2, P3, pos_balle)
+    RC_balle = 0.02;
+    
     % Calcul de normal
     normal = cross(P1-P2, P1-P3);
+
+    % Vecteur unitair normal
+    vu_normal = normal / sqrt(normal(1,:)^2 + normal(2,:)^2 + normal(3,:)^2);
+    
+    
+    
+    % P = [x, y, z]
+    % plan = normal * P'
     
 
 end
@@ -61,15 +71,47 @@ end
 function [Collision, Point] = CollisionArete(P1, P2, pos_balle, r_balle = 0.02)
     u = P1 - P2;
     
+    %En se basant sur l'équation de la sphère
+    % et sur l'équation de la droite passant par P1 de vecteur directeur u
     a = u[1]^2 + u[2]^2 + u[3]^2;
     b = (2 * u[1] * (pos_balle[1] - P1[1])) + (2 * u[2] * (pos_balle[2] - P1[2])) + (2 * u[3] * (pos_balle[3] - P1[3]));
     c = (P1[1] - pos_balle[1])^2 + (P1[2] - pos_balle[2])^2 + (P1[3] - pos_balle[3])^2 - r_balle;
 
-    coll = roots([a b c])
-    Collision = isreal(coll)
-    if (Collision)
+    facteurs = roots([a b c])
+    if (isreal(coll))
+        if (facteurs[1] == facteurs[2])
+            Point = P1 + u * facteurs[1];
+            Collision = PointEntrePoints(Point);
+        else    %Probleme TODO: figure out quoi faire si deux points sont en intersection avec une arete
+            p_1 = P1 + u * facteurs[1];
+            p_2 = P1 + u * facteurs[2];
 
+            if (PointEntrePoints(p_1))
+                if (PointEntrePoints(p_2)) %intersection de 2 points sur l'arete, point milieu?
+                    Point = (p_1 + p_2) / 2;
+                    Collision = 1; 
+                else
+                    Point = p_1;
+                    Collision = 1;
+                end
+            elseif(PointEntrePoints(p_2))
+                Point = p_2;
+                Collision = 1;
+            else
+                Collision = 0;
+            end
+        end
+    else
+        Collision = 0;
     end
+end
+
+function Entre = PointEntrePoints(P, P1, P2)
+    norme_u = norm(P1-P2);
+    norme_v_1 = norm(P1-P);
+    norme_v_2 = norm(P2-P);
+    
+    Entre = norme_v_1 < norme_u && norme_v_2 < norme_u;
 end
 
 function blocToucheSol = BlocToucheSol(pos_bloc)
