@@ -98,7 +98,7 @@ function vf = CalculerVitesseFinal(vi, j_obj, n, I_obj, roc, isCube)
     m = 0.7;
 
     if (isCube == 1)
-        j = -j_obj
+        j = -j_obj;
         m = 0.58;
     end;
 
