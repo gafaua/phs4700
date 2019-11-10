@@ -104,7 +104,9 @@ function vf = CalculerVitesseFinal(vi, j_obj, n, I_obj, roc, isCube)
 
     % vapf = vapi + j(n/m + I^-1 * (rap x n) x rap)
     % vbpf = vbpi - j(n/m + I^-1 * (rbp x n) x rbp)
-    vf = vi + j * (n/m + inv(I_obj) * cross(cross(roc, n), roc)');
+    tmp = cross(cross(roc, n), roc);
+    t = inv(I_obj) * tmp';
+    vf = vi + j * (n/m + t);
 end
 
 function wf = CalculerVitesseAngulaireFinal(wi, j_obj, n, I_obj, roc)

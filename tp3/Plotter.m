@@ -10,8 +10,8 @@ function empty = Plotter(rbt_bloc, rbt_balle, idx)
 	hold on;
 	[x, y, z] = sphere();
 	surf(0.02*x + rbt_balle(length(rbt_balle), 1), 0.02*y + rbt_balle(length(rbt_balle), 2), 0.02*z + rbt_balle(length(rbt_balle), 3));
-	%drawCube([rbt_bloc(length(rbt_bloc), :), 0.06])
-	plotcube([0.06 0.06 0.06], rbt_bloc(length(rbt_bloc), :), 1,[1 0 0]);
+  posCube = rbt_bloc(length(rbt_bloc), :) - [0.03, 0.03, 0.03];
+	plotcube([0.06 0.06 0.06], posCube, 1,[1 0 0]);
 
 	sim = strcat("Simulation", " ", mat2str(idx)); 
 	title (sim);
