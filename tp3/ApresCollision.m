@@ -40,13 +40,13 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
     % Equation de reference sur le document du cours
     % 
     % 1) calculer les normals au moment des collisions 
-    % 2) calculer alpha (5.72)
-    %       a) Calculer G pour bloc et balle (5.73) et (5.74)
-    % 3) calculer vitesse selon le point de collision (5.66)
-    % 4) calculer vitesse vr (5.68), (5.69) et (5.70)
-    % 5) calculer j  (5.71)
-    % 6) calculer les vitesse finaux (5.64), (5.65)
-    % 7) calculer vitesse angulaire final (5.63)
+    % 2) calculer alpha                                 (5.72)
+    %       a) Calculer G pour bloc et balle            (5.73) et (5.74)
+    % 3) calculer vitesse selon le point de collision   (5.66)
+    % 4) calculer vitesse vr                            (5.68), (5.69) et (5.70)
+    % 5) calculer j                                     (5.71)
+    % 6) calculer les vitesse finaux                    (5.64) et (5.65)
+    % 7) calculer vitesse angulaire final               (5.63)
 end
 
 function alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube)
