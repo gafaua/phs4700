@@ -46,7 +46,7 @@ for Simulation=1:6
     ballei(2,:)=[ 5 2 0.1];
   end
   fprintf('\nSimulation %1d\n',Simulation);
-  [Touche tf blocf ballef ]=Devoir3(bloci,ballei,tl);
+  [Touche tf blocf ballef ]=Devoir3(bloci,ballei,tl, Simulation);
   if Touche == 0 
     fprintf('Une collision s''est produite\n');
   else 
@@ -58,6 +58,7 @@ for Simulation=1:6
   fprintf('Vitesse CM du bloc (m/s)          : (%8.6f ,%8.6f, %8.6f) \n',blocf(2,1),blocf(2,2),blocf(2,3));
   fprintf('Vitesse CM de la balle (m/s)      : (%8.6f ,%8.6f, %8.6f) \n',ballef(2,1),ballef(2,2),ballef(2,3));
   fprintf('Vitesse angulaire du bloc (rad/s) : (%8.6f ,%8.6f, %8.6f) \n',blocf(3,1),blocf(3,2),blocf(3,3));
-  pause;
+  % pause;
   clearvars Resultat blocf ballef Post 
 end;
+pause;

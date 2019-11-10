@@ -1,7 +1,6 @@
-function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl)
-
+function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl, idx)
 	dt = 0.001;
-	[Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 1
+	[Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 1
 
 	rbt0_bloc = blocf(1,:);
 	rbt0_balle = ballef(1,:);
@@ -12,7 +11,7 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl)
 	while not(converg)
 		dt = dt/2
 		m = m + 1;
-		[Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 2
+		[Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 2
 		rbt_bloc = blocf(1,:);
 		rbt_balle = ballef(1,:);
 		rbt = [rbt_bloc rbt_balle];
@@ -25,6 +24,9 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl)
 	rbt = rbt + Err / 15;
 	blocf(1,:) = rbt(1:3);
 	ballef(1,:) = rbt(4:6);
+
+	Plotter(rbtblf, rbtbaf, idx);
+	% pause(500);
 	% 3 étapes:
 	% 1) Calculer cinématiques
 	%    a) Calculer RK4 pour le bloc
@@ -39,7 +41,7 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl)
 end
 
 
-function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt)
+function [Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt)
 	rbt_bloc = bloci(1,:);
 	vbf_bloc = bloci(2,:);
 	wb0_bloc = bloci(3,:)
@@ -82,11 +84,11 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 	if (pos == 0) %collision!
 		%TODO calculer les nouvelles vitesses, angulaires et pas angulaires
 	end;
-
-	Plotter(rbt_bloc, rbt_balle);
-	pause(2);
 	Touche = pos;
 	tf = t(i);
+
+	rbtblf = rbt_bloc
+	rbtbaf = rbt_balle
 
 	blocf = [rbt_bloc(i,:);...
 			 vbf_bloc(i,:);...	%TODO: À CHANGER APRÈS L'IMPLÉMENTATION DU CALCUL APRÈS COLLISION
