@@ -3,6 +3,28 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl)
 	dt = 0.001;
 	[Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 1
 
+	rbt0_bloc = blocf(1,:);
+	rbt0_balle = ballef(1,:);
+	rbt0 = [rbt0_bloc rbt0_balle];
+	converg = 0;
+	m=1;
+	epsilon = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001];
+	while not(converg)
+		dt = dt/2
+		m = m + 1;
+		[Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 2
+		rbt_bloc = blocf(1,:);
+		rbt_balle = ballef(1,:);
+		rbt = [rbt_bloc rbt_balle];
+		[converg Err]=ErrSol(rbt,rbt0,epsilon); % Verifier si l'erreur entre les deux solutions converge
+		rbt0=rbt;
+		if m>3
+            break;
+        end;
+	end;
+	rbt = rbt + Err / 15;
+	blocf(1,:) = rbt(1:3);
+	ballef(1,:) = rbt(4:6);
 	% 3 étapes:
 	% 1) Calculer cinématiques
 	%    a) Calculer RK4 pour le bloc
@@ -64,7 +86,7 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 	end;
 
 	Plotter(rbt_bloc, rbt_balle);
-	pause(20);
+	pause(2);
 	Touche = pos;
 	tf = t(i);
 
@@ -100,4 +122,19 @@ function accel = CalculerAcceleration(vb, m, S)
 	sF += (-1 * S) * vb;
 
 	accel = sF / m; % a = F / m (deuxieme loi de newton)
+end
+
+function [converg Err]=ErrSol(rbt1,rbt0,epsilon) % Verification si solution convergee (inspire du document de reference sur moodle)
+	% converg: variable logique pour convergence
+	%         Err<epsilon pour chaque element
+	% Err : Difference entre rbt1 et rbt0
+	% rbt1: nouvelle solution
+	% rbt0: ancienne solution
+	% epsilon : précision
+	Err=(rbt1-rbt0)
+	nbelem = length(Err);
+	converg = 1;
+	for i=1:nbelem
+		converg = converg & abs(Err(i)) < epsilon(i);
+	end
 end
