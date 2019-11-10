@@ -1,4 +1,4 @@
-function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl, idx)
+function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl, idx = 1)
 	dt = 0.001;
 	[Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 1
 
