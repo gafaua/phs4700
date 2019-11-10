@@ -78,7 +78,7 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 
 		%pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
 		% Vérifier position balle & bloc
-		[pos, point] = Position(rbt_bloc(i-1, :), rbt_balle(i-1, :), t(i-1), wb0_bloc);
+		[pos, point] = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
 	end;
 
 	if (pos == 0) %collision!
