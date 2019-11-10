@@ -17,7 +17,7 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
               0        0.000348 0; ...
               0        0        0.000348];
 
-    [n_balle, n_cube] = CalculerNormalUnitaireSphere(p_coll, p_balle);
+    [n_balle, n_cube] = CalculerNormalUnitaire(p_coll, p_balle);
 
     alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube);
 
@@ -51,7 +51,7 @@ end
 
 function alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube)
 
-    [n_balle, n_cube] = CalculerNormalUnitaireSphere(p_coll, p_balle);
+    [n_balle, n_cube] = CalculerNormalUnitaire(p_coll, p_balle);
 
     G_balle = CalculerG(p_balle, p_coll, n_balle, I_balle);
     G_cube = CalculerG(p_cube, p_coll, n_cube, I_cube);
@@ -73,7 +73,7 @@ end
 function [n_balle, n_cube] = CalculerNormalUnitaire(p_coll, p_balle)
     rcb = p_balle - p_coll;
     % La normale pointera toujours vers le centre du cercle
-    n_balle = rcb/sqrt(rcb((1,1)^2 + rcb(1,2)^2 + rcb(1,3)^2));
+    n_balle = rcb/sqrt(rcb(1)^2 + rcb(2)^2 + rcb(3)^2);
     n_cube = -n_balle;
 end
 
