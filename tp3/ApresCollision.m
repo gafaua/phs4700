@@ -25,7 +25,7 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
 
     % vbci = vbi, car le sphere a pas de vitesse angulaire
     vrb_moins = CalculerVr(ep, n_balle, vbi, vcci);
-    vrc_moins = CalculerVr(ep, n_cube, vcci, vbi);
+    vrc_moins = CalculerVr(ep, n_cube, vcci, vbi); %idk si necessaire de calculer
 
     j_balle = CalculerJ(alpha, ep, vrb_moins);
 

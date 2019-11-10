@@ -44,7 +44,7 @@ end
 function [Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt)
 	rbt_bloc = bloci(1,:);
 	vbf_bloc = bloci(2,:);
-	wb0_bloc = bloci(3,:)
+	wb0_bloc = bloci(3,:);
 
 	rbt_balle = ballei(1,:);
 	vbf_balle = ballei(2,:);
@@ -84,7 +84,8 @@ function [Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci
 	end;
 
 	if (pos == 0) %collision!
-		%TODO calculer les nouvelles vitesses, angulaires et pas angulaires
+		% TODO calculer les nouvelles vitesses, angulaires et pas angulaires
+		[vbf_bloc, wb0_bloc, vbf_balle] = ApresCollision(rbt_bloc, rbt_balle, point, vbf_bloc, vbf_balle, wb0_bloc);
 	end;
 
 	Touche = pos;
