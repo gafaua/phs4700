@@ -106,10 +106,10 @@ function vf = CalculerVitesseFinal(vi, j_obj, n, I_obj, roc, isCube)
     % vbpf = vbpi - j(n/m + I^-1 * (rbp x n) x rbp)
     tmp = cross(cross(roc, n), roc);
     t = inv(I_obj) * tmp';
-    vf = vi + j * (n/m + t);
+    vf = vi + j * (n/m + t');
 end
 
 function wf = CalculerVitesseAngulaireFinal(wi, j_obj, n, I_obj, roc)
     % wf = wi -jI^-1 * (rbp x n)
-    wf = wi + (-j_obj) * inv(I_obj) * cross(roc, n)';
+    wf = wi + ((-j_obj) * (inv(I_obj) * cross(roc, n)'))';
 end
