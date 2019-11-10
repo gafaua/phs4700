@@ -103,7 +103,7 @@ function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 
     c = (P1(1) - pos_balle(1))^2 + (P1(2) - pos_balle(2))^2 + (P1(3) - pos_balle(3))^2 - r_balle;
 
     facteurs = roots([a b c])
-    if (isreal(coll))
+    if (isreal(facteurs))
         if (facteurs(1) == facteurs(2))
             Point = P1 + u * facteurs(1);
             Collision = PointSurArete(Point);
