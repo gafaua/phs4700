@@ -24,8 +24,8 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
     vcci = CalculerVitesseSelonPColl(p_cube, p_coll, vci, wc);
 
     % vbci = vbi, car le sphere a pas de vitesse angulaire
-    [vrb_plus, vrb_moins] = CalculerVr(ep, n_balle, vbi, vcci);
-    [vrc_plus, vrc_moins] = CalculerVr(ep, n_cube, vcci, vbi);
+    vrb_moins = CalculerVr(ep, n_balle, vbi, vcci);
+    vrc_moins = CalculerVr(ep, n_cube, vcci, vbi);
 
     j_balle = CalculerJ(alpha, ep, vrb_moins);
 
@@ -40,13 +40,13 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
     % Equation de reference sur le document du cours
     % 
     % 1) calculer les normals au moment des collisions 
-    % 2) calculer alpha (5.72)
-    %       a) Calculer G pour bloc et balle (5.73) et (5.74)
-    % 3) calculer vitesse selon le point de collision (5.66)
-    % 4) calculer vitesse vr (5.68), (5.69) et (5.70)
-    % 5) calculer j  (5.71)
-    % 6) calculer les vitesse finaux (5.64), (5.65)
-    % 7) calculer vitesse angulaire final (5.63)
+    % 2) calculer alpha                                 (5.72)
+    %       a) Calculer G pour bloc et balle            (5.73) et (5.74)
+    % 3) calculer vitesse selon le point de collision   (5.66)
+    % 4) calculer vitesse vr                            (5.68), (5.69) et (5.70)
+    % 5) calculer j                                     (5.71)
+    % 6) calculer les vitesse finaux                    (5.64) et (5.65)
+    % 7) calculer vitesse angulaire final               (5.63)
 end
 
 function alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube)
@@ -83,11 +83,9 @@ function voc = CalculerVitesseSelonPColl(p_obj, p_coll, vi, w)
     voc = vi + cross(w, poc);
 end
 
-function [vr_plus, vr_moins] = CalculerVr(ep, n, v_ref, v_autre)
+function vr_moins = CalculerVr(ep, n, v_ref, v_autre)
     % vr_moins = n * (vap - vbp)
     vr_moins = n * (v_ref - v_autre);
-    % vr_plus = vr_moins/-ep
-    vr_plus = vr_moins/(-ep);
 end
 
 function j = CalculerJ(alpha, ep, vr_moins)
