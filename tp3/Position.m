@@ -6,7 +6,8 @@ function [pos, point] = Position(pos_bloc, pos_balle, t, w_bloc)
         pos = 1;
     elseif BalleToucheSol(pos_balle)
         pos = 1;
-    else pos = 2;
+    else 
+        pos = 2;
     end
 end
 
@@ -14,7 +15,7 @@ function [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc)
     RC_bloc = 0.37837;  #Distance entre CM du cube et son coin
     RC_balle = 0.02;
 
-    d = det(pos_bloc - pos_balle);
+    d = norm(pos_bloc - pos_balle);
     Rtot = RC_balle + RC_bloc;
     
     if (d <= Rtot)

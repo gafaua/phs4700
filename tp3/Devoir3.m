@@ -20,11 +20,10 @@ end
 function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt)
 	rbt_bloc = bloci(1,:);
 	vbf_bloc = bloci(2,:);
-    wb0_bloc = bloci(3,:)
+	wb0_bloc = bloci(3,:)
 
 	rbt_balle = ballei(1,:);
 	vbf_balle = ballei(2,:);
-	S_balle = CalculerAcceleration();
 
 	t = [0];
 	i = 1;
@@ -37,20 +36,24 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 		i += 1;
 		t = [t; t(i-1) + dt];
 
-		q_bloc = [vbf_bloc(i-1, :); rbt(i-1, :); wb0_bloc];
+		q_bloc = [vbf_bloc(i-1, :); rbt_bloc(i-1, :); wb0_bloc];
 		qf_bloc = RK4(q_bloc, dt, 0.58, S_bloc); %Runge-Kutta
 		rbt_bloc = [rbt_bloc; qf_bloc(2, :)];
 		vbf_bloc = [vbf_bloc; qf_bloc(1, :)];
 
-		if (t[i-1] >= tl)
-			q_balle = [vbf_balle(i-1, :); rbt(i-1, :); [0, 0, 0]];
+		if (t(i-1) >= tl)
+			q_balle = [vbf_balle(i-1, :); rbt_balle(i-1, :); [0, 0, 0]];
 			qf_balle = RK4(q_balle, dt, 0.07, S_balle);	%Runge-Kutta
-			rbt_balle = [rbt; qf_balle(2, :)];
-			vbf_balle = [vbf; qf_balle(1, :)];
+			rbt_balle = [rbt_balle; qf_balle(2, :)];
+			vbf_balle = [vbf_balle; qf_balle(1, :)];
+
+			pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
+		else 
+			rbt_balle = [rbt_balle; rbt_balle(i-1, :)];
+			vbf_balle = [vbf_balle; vbf_balle(i-1, :)];
 		end
 
 		% Vérifier position balle & bloc
-		pos = Position(rbt_bloc(i, :));
 	end;
 
 	if (pos == 0) %collision!
@@ -58,7 +61,7 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 	end;
 	
 	Touche = pos;
-	tf = t[i];
+	tf = t(i);
 	vbf = vbf(i-1, :);
 end;
 
