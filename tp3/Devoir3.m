@@ -20,7 +20,7 @@ end
 function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt)
 	rbt_bloc = bloci(1,:);
 	vbf_bloc = bloci(2,:);
-    wb0_bloc = bloci(3,:)
+	wb0_bloc = bloci(3,:)
 
 	rbt_balle = ballei(1,:);
 	vbf_balle = ballei(2,:);
@@ -46,8 +46,13 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 			qf_balle = RK4(q_balle, dt, 0.07, S_balle);	%Runge-Kutta
 			rbt_balle = [rbt_balle; qf_balle(2, :)];
 			vbf_balle = [vbf_balle; qf_balle(1, :)];
+
+		else 
+			rbt_balle = [rbt_balle; rbt_balle(i-1, :)];
+			vbf_balle = [vbf_balle; vbf_balle(i-1, :)];
 		end
 
+		%pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
 		% Vérifier position balle & bloc
 		pos, point = Position(rbt_bloc(i-1, :), rbt_balle(i-1, :), t(i-1), wb0_bloc);
 	end;
@@ -55,7 +60,9 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 	if (pos == 0) %collision!
 		%TODO calculer les nouvelles vitesses, angulaires et pas angulaires
 	end;
-	
+
+	Plotter(rbt_bloc, rbt_balle);
+	pause;
 	Touche = pos;
 	% tf = t(i);
 	% vbf = vbf(i-1, :);
