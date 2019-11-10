@@ -7,9 +7,9 @@
         {
             "type": "OctaveDebugger",
             "request": "launch",
-            "name": "Function or file to execute.",
+            "name": "RouleDevoir3",
             "program": "RouleDevoir3",
-            "octave": "octave-cli",
+            "octave": "octave",
             "sourceFolder": "${workspaceFolder}"
         },
         {
