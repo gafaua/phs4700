@@ -67,7 +67,7 @@ function G = CalculerG(p_object, p_coll, n, I_obj)
     roc = p_coll - p_object;
 
     % G = n [I^-1 (roc x n) x roc]
-    G = n * [inv(I_obj) * cross(cross(roc, n), roc)];
+    G = n * [inv(I_obj) * (cross(cross(roc, n), roc))'];
 end
 
 function [n_balle, n_cube] = CalculerNormalUnitaire(p_coll, p_balle)
@@ -85,7 +85,7 @@ end
 
 function vr_moins = CalculerVr(ep, n, v_ref, v_autre)
     % vr_moins = n * (vap - vbp)
-    vr_moins = n * (v_ref - v_autre);
+    vr_moins = n * (v_ref - v_autre)';
 end
 
 function j = CalculerJ(alpha, ep, vr_moins)
