@@ -7,6 +7,14 @@
         {
             "type": "OctaveDebugger",
             "request": "launch",
+            "name": "Function or file to execute.",
+            "program": "RouleDevoir3",
+            "octave": "octave-cli",
+            "sourceFolder": "${workspaceFolder}"
+        },
+        {
+            "type": "OctaveDebugger",
+            "request": "launch",
             "name": "Position([1,1,1], [1.04, 1.04, 1.04], 3, [0,0,0])",
             "program": "Position([1,1,1], [1.04, 1.04, 1.04], 3, [0,0,0])",
             "octave": "C:/Octave/Octave-5.1.0.0/mingw64/bin/octave-cli",
