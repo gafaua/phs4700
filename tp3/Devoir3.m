@@ -24,7 +24,7 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl)
 	end;
 	rbt = rbt + Err / 15;
 	blocf(1,:) = rbt(1:3);
-	ballef(1,:) = rbt(1,4:6);
+	ballef(1,:) = rbt(4:6);
 	% 3 étapes:
 	% 1) Calculer cinématiques
 	%    a) Calculer RK4 pour le bloc
