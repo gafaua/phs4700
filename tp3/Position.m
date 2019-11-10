@@ -14,7 +14,7 @@ function [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc)
     RC_bloc = 0.37837;  #Distance entre CM du cube et son coin
     RC_balle = 0.02;
 
-    d = det(pos_bloc - pos_balle);
+    d = norm(pos_bloc - pos_balle);
     Rtot = RC_balle + RC_bloc;
     
     if (d <= Rtot)
@@ -23,19 +23,19 @@ function [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc)
         c = 0.03;
         
         %Sommets S du cube
-        S = [M * [-c, -c,  c] + pos_bloc];
-        S = [S; M * [c,  -c,  c] + pos_bloc];
-        S = [S; M * [c,  c,   c] + pos_bloc];
-        S = [S; M * [c,  c,  -c] + pos_bloc];
-        S = [S; M * [-c, -c, -c] + pos_bloc];
-        S = [S; M * [-c, c,  -c] + pos_bloc];
-        S = [S; M * [c, -c,  -c] + pos_bloc];
-        S = [S; M * [-c, c,  c] + pos_bloc];
+        S = [(M * [-c; -c; c])' + pos_bloc];
+        S = [S; (M * [c;  -c;  c])' + pos_bloc];
+        S = [S; (M * [c;  c;   c])' + pos_bloc];
+        S = [S; (M * [c;  c;  -c])' + pos_bloc];
+        S = [S; (M * [-c; -c; -c])' + pos_bloc];
+        S = [S; (M * [-c; c;  -c])' + pos_bloc];
+        S = [S; (M * [c; -c;  -c])' + pos_bloc];
+        S = [S; (M * [-c; c;  c])' + pos_bloc];
 
         %Détection des collisions possibles avec les sommets du cube
         for idx=1:8
             if (CollisionPointSphere(S(idx, :), pos_balle))
-                Collision = 1;
+                collision = 1;
                 point = S(idx, :);
                 return;
             end
@@ -67,7 +67,7 @@ function [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc)
         [collision, point] = CollisionAreteSphere(S(8, :), S(3, :), pos_balle);
         if (collision) return; end
 
-        %Détection des collusions possibles avec les faces du cube
+        %Détection des collisions possibles avec les faces du cube
         [collision, point] = CollisionPlanSphere(S(3, :), S(2, :), S(1, :), pos_balle);
         if (collision) return; end
         [collision, point] = CollisionPlanSphere(S(5, :), S(1, :), S(2, :), pos_balle);
@@ -102,7 +102,7 @@ function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 
     c = (P1(1) - pos_balle(1))^2 + (P1(2) - pos_balle(2))^2 + (P1(3) - pos_balle(3))^2 - r_balle;
 
     facteurs = roots([a b c])
-    if (isreal(coll))
+    if (isreal(facteurs))
         if (facteurs(1) == facteurs(2))
             Point = P1 + u * facteurs(1);
             Collision = PointSurArete(Point);
@@ -169,15 +169,26 @@ function Entre = PointSurFace(P, P1, P2, P3)
 end
 
 function M = Rotation(t, w_bloc)
-    M = [0,          -w_bloc(3), w_bloc(2);...
-         w_bloc(3),  0,          -w_bloc(1);...
-         -w_bloc(2), w_bloc(1),  0] * t;
+    rot = w_bloc * t;
+    M_x = [1, 0,            0;...
+           0, cos(rot(1)), -sin(rot(1));...
+           0, sin(rot(1)),  cos(rot(1))];
+
+    M_y = [cos(rot(2)), 0, sin(rot(2));...
+           0,           1, 0;...
+          -sin(rot(2)), 0, cos(rot(2))];
+
+    M_z = [cos(rot(3)), -sin(rot(3)), 0;...
+           sin(rot(3)),  cos(rot(3)), 0;...
+           0,            0,           1];
+    
+    M = M_z * M_y * M_x;
 end
 
 function blocToucheSol = BlocToucheSol(pos_bloc)
- 
+    blocToucheSol = pos_bloc(3) > 0;
 end
 
 function balleToucheSol = BalleToucheSol(pos_balle)
-    balleToucheSol = pos_balle(3,:) <= 0.02;
+    balleToucheSol = pos_balle(3) <= 0.02;
 end
