@@ -27,7 +27,9 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 
 	t = [0];
 	i = 1;
+
 	pos = 2;
+	point = [0, 0, 0];
 
 	S_bloc = 1.2 * 0.06^2;
 	S_balle = pi * 0.02^2;

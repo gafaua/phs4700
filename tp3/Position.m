@@ -12,7 +12,7 @@ function [pos, point] = Position(pos_bloc, pos_balle, t, w_bloc)
 end
 
 function [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc)
-    RC_bloc = 0.37837;  #Distance entre CM du cube et son coin
+    RC_bloc = 0.05196152422706632; #Distance entre CM du cube et son coin
     RC_balle = 0.02;
 
     d = norm(pos_bloc - pos_balle);
@@ -25,13 +25,13 @@ function [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc)
         
         %Sommets S du cube
         S = [(M * [-c; -c; c])' + pos_bloc];
-        S = [S; (M * [c;  -c;  c])' + pos_bloc];
-        S = [S; (M * [c;  c;   c])' + pos_bloc];
-        S = [S; (M * [c;  c;  -c])' + pos_bloc];
+        S = [S; (M * [ c; -c;  c])' + pos_bloc];
+        S = [S; (M * [ c;  c;  c])' + pos_bloc];
+        S = [S; (M * [ c;  c; -c])' + pos_bloc];
         S = [S; (M * [-c; -c; -c])' + pos_bloc];
-        S = [S; (M * [-c; c;  -c])' + pos_bloc];
-        S = [S; (M * [c; -c;  -c])' + pos_bloc];
-        S = [S; (M * [-c; c;  c])' + pos_bloc];
+        S = [S; (M * [-c;  c; -c])' + pos_bloc];
+        S = [S; (M * [ c; -c; -c])' + pos_bloc];
+        S = [S; (M * [-c;  c;  c])' + pos_bloc];
 
         %Détection des collisions possibles avec les sommets du cube
         for idx=1:8
@@ -89,17 +89,16 @@ end
 
 function Collision = CollisionPointSphere(P, pos_balle, r_balle = 0.02)
     %sphère: (x-pos[x])^2 + (y-pos[y])^2 + (z-pos[z])^2 <= r
-    Collision = ((P(1) - pos_balle(1))^2 + (P(2) - pos_balle(2))^2 + (P(3) - pos_balle(3))^2) <= r_balle;
+    Collision = ((P(1) - pos_balle(1))^2 + (P(2) - pos_balle(2))^2 + (P(3) - pos_balle(3))^2) <= r_balle^2;
 end
 
 %TODO FINIR COLLISION AVEC ARETE SI 2 POINTS DE CONTACT
 function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 0.02)
     u = P1 - P2;
-    
     %En se basant sur l'équation de la sphère
     % et sur l'équation de la droite passant par P1 de vecteur directeur u
-    a = u(1)^2 + u(2)^2 + u(3)^2;
-    b = (2 * u(1) * (pos_balle(1) - P1(1))) + (2 * u(2) * (pos_balle(2) - P1(2))) + (2 * u(3) * (pos_balle(3) - P1(3)));
+    a = (u(1))^2 + (u(2))^2 + (u(3))^2;
+    b = 2*((u(1) * (P1(1) - pos_balle(1))) + (u(2) * (P1(2) - pos_balle(2))) + (u(3) * (P1(3) - pos_balle(3))));
     c = (P1(1) - pos_balle(1))^2 + (P1(2) - pos_balle(2))^2 + (P1(3) - pos_balle(3))^2 - r_balle;
 
     facteurs = roots([a b c]);
