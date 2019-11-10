@@ -59,7 +59,9 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 	if (pos == 0) %collision!
 		%TODO calculer les nouvelles vitesses, angulaires et pas angulaires
 	end;
-	
+
+	Plotter(rbt_bloc, rbt_balle);
+	pause;
 	Touche = pos;
 	tf = t(i);
 	vbf = vbf(i-1, :);

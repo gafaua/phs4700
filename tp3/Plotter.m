@@ -1,13 +1,14 @@
-function empty = Plotter(rbt, simulation, option)
+function empty = Plotter(rbt_bloc, rbt_balle)
     empty = 0;
 
-	p = plot3(rbt(:, 1), rbt(:, 2), rbt(:, 3), "o");
+	p = plot3(rbt_bloc(:, 1), rbt_bloc(:, 2), rbt_bloc(:, 3), "o");
 	hold on;
-	if option == 3
-		legend("Option 1", "Option 2", "Option 3");
-		Terrain();
-		sim = strcat("Simulation", " ", mat2str(simulation)); 
-		title (sim);
+	d = plot3(rbt_balle(:, 1), rbt_balle(:, 2), rbt_balle(:, 3), "o");
+
+	% Terrain();
+
+	% sim = strcat("Simulation", " ", mat2str(simulation)); 
+	% title (sim);
 	end
 end
 
