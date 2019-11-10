@@ -102,11 +102,11 @@ function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 
     b = (2 * u(1) * (pos_balle(1) - P1(1))) + (2 * u(2) * (pos_balle(2) - P1(2))) + (2 * u(3) * (pos_balle(3) - P1(3)));
     c = (P1(1) - pos_balle(1))^2 + (P1(2) - pos_balle(2))^2 + (P1(3) - pos_balle(3))^2 - r_balle;
 
-    facteurs = roots([a b c])
+    facteurs = roots([a b c]);
     if (isreal(facteurs))
         if (facteurs(1) == facteurs(2))
             Point = P1 + u * facteurs(1);
-            Collision = PointSurArete(Point);
+            Collision = PointSurArete(Point, P1, P2);
         else    %Probleme TODO: figure out quoi faire si deux points sont en intersection avec une arete
             p_1 = P1 + u * facteurs(1);
             p_2 = P1 + u * facteurs(2);
@@ -114,12 +114,12 @@ function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 
             Point = [0, 0, 0];
             n = 0;
 
-            if (PointSurArete(p_1))
+            if (PointSurArete(p_1, P1, P2))
                 Point += p_1;
                 n += 1;
             end
 
-            if (PointSurArete(p_2))
+            if (PointSurArete(p_2, P1, P2))
                 Point += p_2;
                 n += 1;
             end
@@ -133,6 +133,7 @@ function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 
         end
     else
         Collision = 0;
+        Point = [0, 0, 0];
     end
 end
 
@@ -152,6 +153,8 @@ function [Collision, Point] = CollisionPlanSphere(P1, P2, P3, pos_balle, r_balle
 
     if (Collision)
         Point = P;
+    else
+        Point = [0, 0, 0];
     end
 end
 
