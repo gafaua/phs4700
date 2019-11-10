@@ -47,12 +47,12 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 			rbt_balle = [rbt_balle; qf_balle(2, :)];
 			vbf_balle = [vbf_balle; qf_balle(1, :)];
 
-			pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
 		else 
 			rbt_balle = [rbt_balle; rbt_balle(i-1, :)];
 			vbf_balle = [vbf_balle; vbf_balle(i-1, :)];
 		end
 
+		pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
 		% Vérifier position balle & bloc
 	end;
 

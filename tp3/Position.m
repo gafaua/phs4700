@@ -2,7 +2,7 @@ function [pos, point] = Position(pos_bloc, pos_balle, t, w_bloc)
     [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc);
     if (collision)
         pos = 0;
-    elseif BlocToucheSol(pos_bloc)
+    elseif BlocToucheSol(pos_bloc, t, w_bloc)
         pos = 1;
     elseif BalleToucheSol(pos_balle)
         pos = 1;
@@ -175,8 +175,29 @@ function M = Rotation(t, w_bloc)
          -w_bloc(2), w_bloc(1),  0] * t;
 end
 
-function blocToucheSol = BlocToucheSol(pos_bloc)
- 
+function blocToucheSol = BlocToucheSol(pos_bloc, t, w_bloc)
+        M = Rotation(t, w_bloc);
+        c = 0.03;
+        
+        %Sommets S du cube
+        S = [M * [-c, -c,  c] + pos_bloc];
+        S = [S; M * [c,  -c,  c] + pos_bloc];
+        S = [S; M * [c,  c,   c] + pos_bloc];
+        S = [S; M * [c,  c,  -c] + pos_bloc];
+        S = [S; M * [-c, -c, -c] + pos_bloc];
+        S = [S; M * [-c, c,  -c] + pos_bloc];
+        S = [S; M * [c, -c,  -c] + pos_bloc];
+        S = [S; M * [-c, c,  c] + pos_bloc];
+
+        blocToucheSol = false;
+
+        %Détection des collisions possibles avec les sommets du cube
+        for idx=1:8
+            if (S(idx, 3) <= 0)
+                blocToucheSol = true;
+                return;
+            end
+        end
 end
 
 function balleToucheSol = BalleToucheSol(pos_balle)
