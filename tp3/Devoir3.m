@@ -52,8 +52,9 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 			vbf_balle = [vbf_balle; vbf_balle(i-1, :)];
 		end
 
-		pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
+		%pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
 		% Vérifier position balle & bloc
+		[pos, point] = Position(rbt_bloc(i-1, :), rbt_balle(i-1, :), t(i-1), wb0_bloc);
 	end;
 
 	if (pos == 0) %collision!
@@ -61,10 +62,16 @@ function [Touche, tf, blocf, ballef] = CalculerTrajectoire(bloci, ballei, tl, dt
 	end;
 
 	Plotter(rbt_bloc, rbt_balle);
-	pause;
+	pause(20);
 	Touche = pos;
 	tf = t(i);
-	vbf = vbf(i-1, :);
+
+	blocf = [rbt_bloc(i,:);...
+			 vbf_bloc(i,:);...	%TODO: À CHANGER APRÈS L'IMPLÉMENTATION DU CALCUL APRÈS COLLISION
+			 wb0_bloc];			%TODO: À CHANGER APRÈS L'IMPLÉMENTATION DU CALCUL APRÈS COLLISION
+	
+	ballef = [rbt_balle(i,:);...%TODO: À CHANGER APRÈS L'IMPLÉMENTATION DU CALCUL APRÈS COLLISION
+			  vbf_balle(i,:)];
 end;
 
 function qf = RK4(q, dt, m, S)
