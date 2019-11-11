@@ -12,19 +12,20 @@ function [pos, point, M] = Position(pos_bloc, pos_balle, t, w_bloc)
 end
 
 function [collision, point, M] = Collision(pos_bloc, pos_balle, t, w_bloc)
-    RC_bloc = 0.05196152422706632; #Distance entre CM du cube et son coin
-    RC_balle = 0.02;
-    M = 0;
+    RC_bloc = 0.05196152422706632; # Distance entre CM du cube et son coin
+    RC_balle = 0.02; # Rayon de la balle
+    M = []; # Matrice de rotation du cube
 
     d = norm(pos_bloc - pos_balle);
     Rtot = RC_balle + RC_bloc;
     
+    # Détection Sphère - Sphère englobant le cube
     if (d <= Rtot)
         % Detection de collision plus approfondie
         M = Rotation(t, w_bloc);
-        c = 0.03;
+        c = 0.03; % Distance entre CM du cube et une des faces
         
-        %Sommets S du cube
+        % Sommets S du cube
         S = [(M * [-c; -c; c])' + pos_bloc];
         S = [S; (M * [ c; -c;  c])' + pos_bloc];
         S = [S; (M * [ c;  c;  c])' + pos_bloc];
@@ -84,6 +85,7 @@ function [collision, point, M] = Collision(pos_bloc, pos_balle, t, w_bloc)
         if (collision) return; end
     end 
 
+    % Pas de collisions
     collision = 0;
     point = [0, 0, 0];
 end
@@ -96,6 +98,7 @@ end
 %TODO FINIR COLLISION AVEC ARETE SI 2 POINTS DE CONTACT
 function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 0.02)
     u = P1 - P2;
+
     %En se basant sur l'équation de la sphère
     % et sur l'équation de la droite passant par P1 de vecteur directeur u
     a = (u(1))^2 + (u(2))^2 + (u(3))^2;
@@ -193,7 +196,7 @@ function blocToucheSol = BlocToucheSol(pos_bloc, t, w_bloc)
     M = Rotation(t, w_bloc);
     c = 0.03;
     
-    %Sommets S du cube
+    % Sommets S du cube
     S = [(M * [-c; -c;  c])' + pos_bloc];
     S = [S; (M * [c;  -c;  c])' + pos_bloc];
     S = [S; (M * [c;  c;   c])' + pos_bloc];
@@ -205,7 +208,7 @@ function blocToucheSol = BlocToucheSol(pos_bloc, t, w_bloc)
 
     blocToucheSol = false;
 
-    %Détection des collisions possibles avec les sommets du cube
+    % Détection des collisions possibles avec les sommets du cube
     for idx=1:8
         if (S(idx, 3) <= 0)
             blocToucheSol = true;

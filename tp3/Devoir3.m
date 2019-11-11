@@ -1,17 +1,19 @@
 function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl, idx = 1)
 	dt = 0.001;
-	[Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 1
+	[Touche, tf, blocf, ballef, rbt_cf, rbt_bf] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution initiale
 
 	rbt0_bloc = blocf(1,:);
 	rbt0_balle = ballef(1,:);
 	rbt0 = [rbt0_bloc rbt0_balle];
+
+	% Calcul d'erreur et méthode d'atteinte des critères de précision
 	converg = 0;
 	m=1;
 	epsilon = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001];
 	while not(converg)
 		dt = dt/2;
 		m = m + 1;
-		[Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 2
+		[Touche, tf, blocf, ballef, rbt_cf, rbt_bf] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution raffinée
 		rbt_bloc = blocf(1,:);
 		rbt_balle = ballef(1,:);
 		rbt = [rbt_bloc rbt_balle];
@@ -27,9 +29,12 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl, idx = 1)
 	ballef(1,:) = rbt(4:6);
 
 	% Plotter les résultats 
-	Plotter(rbtblf, rbtbaf, idx);
+	Plotter(rbt_cf, rbt_bf, idx);
 	pause(2);
+end
 
+
+function [Touche, tf, blocf, ballef, rbt_cf, rbt_bf] = CalculerTrajectoire(bloci, ballei, tl, dt)
 	% 3 étapes:
 	% 1) Calculer cinématiques
 	%    a) Calculer RK4 pour le bloc
@@ -40,14 +45,11 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl, idx = 1)
 	%    b) Détecter collision sol
 	%       b.a) Détecter collision balle-sol
 	%       b.b) Détecter collision bloc-sol
-	% 3) Calculer restitution balle-bloc
-end
+	% 3) Calculer vitesses post-collision balle-bloc
 
-
-function [Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt)
 	rbt_bloc = bloci(1,:);
 	vbf_bloc = bloci(2,:);
-	wb0_bloc = bloci(3,:);
+	wb_bloc = bloci(3,:);
 
 	rbt_balle = ballei(1,:);
 	vbf_balle = ballei(2,:);
@@ -58,39 +60,40 @@ function [Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci
 	pos = 2;
 	point = [0, 0, 0];
 
+	% Surface du bloc: 1.2 * A^2
 	S_bloc = 1.2 * 0.06^2;
+	
+	% Surface de la balle: pi * r^2
 	S_balle = pi * 0.02^2;
 
+	% Tant qu'aucune collision n'a été détecté
 	while (pos == 2)
 		i += 1;
 		t = [t; t(i-1) + dt];
 
-		q_bloc = [vbf_bloc(i-1, :); rbt_bloc(i-1, :); wb0_bloc];
-		qf_bloc = RK4(q_bloc, dt, 0.58, S_bloc); %Runge-Kutta
+		q_bloc = [vbf_bloc(i-1, :); rbt_bloc(i-1, :); wb_bloc];
+		qf_bloc = RK4(q_bloc, dt, 0.58, S_bloc); % Runge-Kutta
 		rbt_bloc = [rbt_bloc; qf_bloc(2, :)];
 		vbf_bloc = [vbf_bloc; qf_bloc(1, :)];
 
-		if (t(i-1) >= tl)
+		
+		if (t(i-1) >= tl) % Si la balle a été lancée
 			q_balle = [vbf_balle(i-1, :); rbt_balle(i-1, :); [0, 0, 0]];
-			qf_balle = RK4(q_balle, dt, 0.07, S_balle);	%Runge-Kutta
+			qf_balle = RK4(q_balle, dt, 0.07, S_balle);	% Runge-Kutta
 			rbt_balle = [rbt_balle; qf_balle(2, :)];
 			vbf_balle = [vbf_balle; qf_balle(1, :)];
-
 		else 
 			rbt_balle = [rbt_balle; rbt_balle(i-1, :)];
 			vbf_balle = [vbf_balle; vbf_balle(i-1, :)];
 		end
 
-		%pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
-		% Vérifier position balle & bloc
-		[pos, point, M] = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
+		[pos, point, M] = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb_bloc);
 	end;
 
-	if (pos == 0) %collision!
-		% TODO calculer les nouvelles vitesses, angulaires et pas angulaires
-		[vbf_blocf, wbf_bloc, vbf_ballef] = ApresCollision(rbt_bloc(i,:), rbt_balle(i,:), point, vbf_bloc(i,:), vbf_balle(i,:), wb0_bloc, M);
+	if (pos == 0) % Collision détectée entre la balle et le bloc
+		[vbf_blocf, wbf_bloc, vbf_ballef] = ApresCollision(rbt_bloc(i,:), rbt_balle(i,:), point, vbf_bloc(i,:), vbf_balle(i,:), wb_bloc, M);
 		vbf_bloc(i,:) = vbf_blocf;
-		wb0_bloc = wbf_bloc;
+		wb_bloc = wbf_bloc;
 		vbf_balle(i,:) = vbf_ballef;
 	end;
 
@@ -98,14 +101,15 @@ function [Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci
 	tf = t(i);
 
 	blocf = [rbt_bloc(i,:);...
-			 vbf_bloc(i,:);...	%TODO: À CHANGER APRÈS L'IMPLÉMENTATION DU CALCUL APRÈS COLLISION
-			 wb0_bloc];			%TODO: À CHANGER APRÈS L'IMPLÉMENTATION DU CALCUL APRÈS COLLISION
+			 vbf_bloc(i,:);...
+			 wb_bloc];
 	
-	ballef = [rbt_balle(i,:);...%TODO: À CHANGER APRÈS L'IMPLÉMENTATION DU CALCUL APRÈS COLLISION
+	ballef = [rbt_balle(i,:);...
 			  vbf_balle(i,:)];
 
-	rbtblf = rbt_bloc;
-	rbtbaf = rbt_balle;
+	% Pour les graphes
+	rbt_cf = rbt_bloc;
+	rbt_bf = rbt_balle;
 end;
 
 function qf = RK4(q, dt, m, S)
@@ -128,15 +132,17 @@ function g = g(q, dt, m, S)
 end
 
 function accel = CalculerAcceleration(vb, m, S)
-	sF = m * [0, 0, -9.8]; % GRAVITE
-	sF += (-1 * S) * vb;
+	sF = m * [0, 0, -9.8]; % Gravité
+	sF += (-1 * S) * vb; % Force de frottement visqueux
 
-	accel = sF / m; % a = F / m (deuxieme loi de newton)
+ 	% Deuxieme loi de newton
+	accel = sF / m;
 end
 
-function [converg Err]=ErrSol(rbt1,rbt0,epsilon) % Verification si solution convergee (inspire du document de reference sur moodle)
+function [converg Err]=ErrSol(rbt1,rbt0,epsilon) 
+	% Verification si solution convergee (inspire du document de reference sur moodle)
 	% converg: variable logique pour convergence
-	%         Err<epsilon pour chaque element
+	%          Err<epsilon pour chaque element
 	% Err : Difference entre rbt1 et rbt0
 	% rbt1: nouvelle solution
 	% rbt0: ancienne solution

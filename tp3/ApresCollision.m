@@ -6,6 +6,16 @@
 % vbi: vitesse de la balle avant collision
 % wc: vitesse angulaire du cube
 function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, vci, vbi, wc, R)
+    % Equation de reference sur le document du cours
+    % 
+    % 1) calculer les normals au moment des collisions 
+    % 2) calculer alpha                                 (5.72)
+    %       a) Calculer G pour bloc et balle            (5.73) et (5.74)
+    % 3) calculer vitesse selon le point de collision   (5.66)
+    % 4) calculer vitesse vr                            (5.68), (5.69) et (5.70)
+    % 5) calculer j                                     (5.71)
+    % 6) calculer les vitesse finales                   (5.64) et (5.65)
+    % 7) calculer vitesse angulaire finale              (5.63)
 
     ep = 0.8;
 
@@ -25,7 +35,7 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
 
     vcci = CalculerVitesseSelonPColl(p_cube, p_coll, vci, wc);
 
-    % vbci = vbi, car la sphere a pas de vitesse angulaire
+    % vbci = vbi, car la balle a pas de vitesse angulaire
     vrb_moins = CalculerVr(ep, n_collision, vbi, vcci);
 
     j_balle = CalculerJ(alpha, ep, vrb_moins);
@@ -37,17 +47,6 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
     vf_bloc = CalculerVitesseFinal(vcci, j_balle, n_collision, I_cube, rcc, 1);
 
     wf_bloc = CalculerVitesseAngulaireFinal(wc, j_balle, n_collision, I_cube, rcc);
-
-    % Equation de reference sur le document du cours
-    % 
-    % 1) calculer les normals au moment des collisions 
-    % 2) calculer alpha                                 (5.72)
-    %       a) Calculer G pour bloc et balle            (5.73) et (5.74)
-    % 3) calculer vitesse selon le point de collision   (5.66)
-    % 4) calculer vitesse vr                            (5.68), (5.69) et (5.70)
-    % 5) calculer j                                     (5.71)
-    % 6) calculer les vitesse finaux                    (5.64) et (5.65)
-    % 7) calculer vitesse angulaire final               (5.63)
 end
 
 function alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube, n_collision)
@@ -64,12 +63,12 @@ end
 function G = CalculerG(p_object, p_coll, n, I_obj)
     roc = p_coll - p_object;
 
-    a = cross(roc, n);
+    roc_n = cross(roc, n);
 
-    b = cross(a, roc);
+    rnr = cross(roc_n, roc);
 
     % G = n [I^-1 (roc x n) x roc]
-    G = n * (inv(I_obj) * b');
+    G = n * (inv(I_obj) * rnr');
 end
 
 function n_collision = CalculerNormalUnitaire(p_coll, p_balle)
@@ -105,14 +104,14 @@ function vf = CalculerVitesseFinal(vi, j_obj, n, I_obj, roc, isCube)
 
     % vapf = vapi + j(n/m + I^-1 * (rap x n) x rap)
     % vbpf = vbpi - j(n/m + I^-1 * (rbp x n) x rbp)
-    tmp = cross(cross(roc, n), roc);
-    t = inv(I_obj) * tmp';
-    vf = vi + j * (n/m + t');
+    rap_n = cross(cross(roc, n), roc);
+    I_rapn = inv(I_obj) * rap_n';
+    vf = vi + j * (n/m + I_rapn');
 end
 
 function wf = CalculerVitesseAngulaireFinal(wi, j_obj, n, I_obj, roc)
     % wf = wi -jI^-1 * (rbp x n)
-    a = cross(roc, n);
-    b = inv(I_obj) * a';
-    wf = wi - (j_obj * (b))';
+    rbp_n = cross(roc, n);
+    I_rbpn = inv(I_obj) * rbp_n';
+    wf = wi - (j_obj * (I_rbpn))';
 end
