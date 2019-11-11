@@ -43,7 +43,7 @@ function [collision, point, M] = Collision(pos_bloc, pos_balle, t, w_bloc)
                 return;
             end
         end
-
+        
         %Détection des collisions possibles avec les arêtes du cube
         [collision, point] = CollisionAreteSphere(S(1, :), S(2, :), pos_balle);
         if (collision) return; end
@@ -95,7 +95,6 @@ function Collision = CollisionPointSphere(P, pos_balle, r_balle = 0.02)
     Collision = ((P(1) - pos_balle(1))^2 + (P(2) - pos_balle(2))^2 + (P(3) - pos_balle(3))^2) <= r_balle^2;
 end
 
-%TODO FINIR COLLISION AVEC ARETE SI 2 POINTS DE CONTACT
 function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 0.02)
     u = P1 - P2;
 
@@ -103,14 +102,14 @@ function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 
     % et sur l'équation de la droite passant par P1 de vecteur directeur u
     a = (u(1))^2 + (u(2))^2 + (u(3))^2;
     b = 2*((u(1) * (P1(1) - pos_balle(1))) + (u(2) * (P1(2) - pos_balle(2))) + (u(3) * (P1(3) - pos_balle(3))));
-    c = (P1(1) - pos_balle(1))^2 + (P1(2) - pos_balle(2))^2 + (P1(3) - pos_balle(3))^2 - r_balle;
+    c = (P1(1) - pos_balle(1))^2 + (P1(2) - pos_balle(2))^2 + (P1(3) - pos_balle(3))^2 - r_balle^2;
 
     facteurs = roots([a b c]);
     if (isreal(facteurs))
         if (facteurs(1) == facteurs(2))
             Point = P1 + u * facteurs(1);
             Collision = PointSurArete(Point, P1, P2);
-        else    %Probleme TODO: figure out quoi faire si deux points sont en intersection avec une arete
+        else
             p_1 = P1 + u * facteurs(1);
             p_2 = P1 + u * facteurs(2);
 
@@ -128,7 +127,7 @@ function [Collision, Point] = CollisionAreteSphere(P1, P2, pos_balle, r_balle = 
             end
 
             if (n)
-                Collision = n;%n = 2 implique que 2 points sont en collision avec l'arête
+                Collision = n; %n = 2 implique que 2 points sont en collision avec l'arête, on prend alors le point milieu
                 Point = Point / n;
             else
                 Collision = 0;
