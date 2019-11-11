@@ -9,7 +9,7 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl, idx = 1)
 	m=1;
 	epsilon = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001];
 	while not(converg)
-		dt = dt/2
+		dt = dt/2;
 		m = m + 1;
 		[Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci, ballei, tl, dt); % Solution 2
 		rbt_bloc = blocf(1,:);
@@ -80,12 +80,12 @@ function [Touche, tf, blocf, ballef, rbtblf, rbtbaf] = CalculerTrajectoire(bloci
 
 		%pos = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
 		% Vérifier position balle & bloc
-		[pos, point] = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
+		[pos, point, M] = Position(rbt_bloc(i, :), rbt_balle(i, :), t(i), wb0_bloc);
 	end;
 
 	if (pos == 0) %collision!
 		% TODO calculer les nouvelles vitesses, angulaires et pas angulaires
-		[vbf_blocf, wbf_bloc, vbf_ballef] = ApresCollision(rbt_bloc(i,:), rbt_balle(i,:), point, vbf_bloc(i,:), vbf_balle(i,:), wb0_bloc);
+		[vbf_blocf, wbf_bloc, vbf_ballef] = ApresCollision(rbt_bloc(i,:), rbt_balle(i,:), point, vbf_bloc(i,:), vbf_balle(i,:), wb0_bloc, M);
 		vbf_bloc(i,:) = vbf_blocf;
 		wb0_bloc = wbf_bloc;
 		vbf_balle(i,:) = vbf_ballef;
@@ -138,7 +138,7 @@ function [converg Err]=ErrSol(rbt1,rbt0,epsilon) % Verification si solution conv
 	% rbt1: nouvelle solution
 	% rbt0: ancienne solution
 	% epsilon : précision
-	Err=(rbt1-rbt0)
+	Err=(rbt1-rbt0);
 	nbelem = length(Err);
 	converg = 1;
 	for i=1:nbelem

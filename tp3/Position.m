@@ -1,5 +1,5 @@
-function [pos, point] = Position(pos_bloc, pos_balle, t, w_bloc)
-    [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc);
+function [pos, point, M] = Position(pos_bloc, pos_balle, t, w_bloc)
+    [collision, point, M] = Collision(pos_bloc, pos_balle, t, w_bloc);
     if (collision)
         pos = 0;
     elseif BlocToucheSol(pos_bloc, t, w_bloc)
@@ -11,9 +11,10 @@ function [pos, point] = Position(pos_bloc, pos_balle, t, w_bloc)
     end
 end
 
-function [collision, point] = Collision(pos_bloc, pos_balle, t, w_bloc)
+function [collision, point, M] = Collision(pos_bloc, pos_balle, t, w_bloc)
     RC_bloc = 0.05196152422706632; #Distance entre CM du cube et son coin
     RC_balle = 0.02;
+    M = 0;
 
     d = norm(pos_bloc - pos_balle);
     Rtot = RC_balle + RC_bloc;

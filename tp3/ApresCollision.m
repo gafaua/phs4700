@@ -5,7 +5,7 @@
 % vci: vitesse du cube avant collision
 % vbi: vitesse de la balle avant collision
 % wc: vitesse angulaire du cube
-function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, vci, vbi, wc)
+function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, vci, vbi, wc, R)
 
     ep = 0.8;
 
@@ -16,6 +16,8 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
     I_cube = [0.000348 0        0; ...
               0        0.000348 0; ...
               0        0        0.000348];
+    
+    I_cube = R * I_cube * R';
 
     [n_balle, n_cube] = CalculerNormalUnitaire(p_coll, p_balle);
 
@@ -23,7 +25,7 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
 
     vcci = CalculerVitesseSelonPColl(p_cube, p_coll, vci, wc);
 
-    % vbci = vbi, car le sphere a pas de vitesse angulaire
+    % vbci = vbi, car la sphere a pas de vitesse angulaire
     vrb_moins = CalculerVr(ep, n_balle, vbi, vcci);
     vrc_moins = CalculerVr(ep, n_cube, vcci, vbi); %idk si necessaire de calculer
 
