@@ -9,9 +9,9 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
 
     ep = 0.8;
 
-    I_balle = [0.000112 0        0; ...
-               0        0.000112 0; ...
-               0        0        0.000112];
+    I_balle = [0.0000112 0        0; ...
+               0        0.0000112 0; ...
+               0        0        0.0000112];
 
     I_cube = [0.000348 0        0; ...
               0        0.000348 0; ...
@@ -19,24 +19,24 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
     
     I_cube = R * I_cube * R';
 
-    [n_balle, n_cube] = CalculerNormalUnitaire(p_coll, p_balle);
+    n_collision = CalculerNormalUnitaire(p_coll, p_balle);
 
-    alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube);
+    alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube, n_collision);
 
     vcci = CalculerVitesseSelonPColl(p_cube, p_coll, vci, wc);
 
     % vbci = vbi, car la sphere a pas de vitesse angulaire
-    vrb_moins = CalculerVr(ep, n_balle, vbi, vcci);
+    vrb_moins = CalculerVr(ep, n_collision, vbi, vcci);
 
     j_balle = CalculerJ(alpha, ep, vrb_moins);
 
     rbc = p_coll - p_balle;
     rcc = p_coll - p_cube;
 
-    vf_balle = CalculerVitesseFinal(vbi, j_balle, n_balle, I_balle, rbc, 0);
-    vf_bloc = CalculerVitesseFinal(vcci, j_balle, n_cube, I_cube, rcc, 1);
+    vf_balle = CalculerVitesseFinal(vbi, j_balle, n_collision, I_balle, rbc, 0);
+    vf_bloc = CalculerVitesseFinal(vcci, j_balle, n_collision, I_cube, rcc, 1);
 
-    wf_bloc = CalculerVitesseAngulaireFinal(wc, j_balle, n_cube, I_cube, rcc);
+    wf_bloc = CalculerVitesseAngulaireFinal(wc, j_balle, n_collision, I_cube, rcc);
 
     % Equation de reference sur le document du cours
     % 
@@ -50,14 +50,11 @@ function [vf_bloc, wf_bloc, vf_balle] = ApresCollision(p_cube, p_balle, p_coll, 
     % 7) calculer vitesse angulaire final               (5.63)
 end
 
-function alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube)
+function alpha = CalculerAlpha(p_balle, p_cube, p_coll, I_balle, I_cube, n_collision)
+    G_balle = CalculerG(p_balle, p_coll, n_collision, I_balle);
+    G_cube = CalculerG(p_cube, p_coll, n_collision, I_cube);
 
-    [n_balle, n_cube] = CalculerNormalUnitaire(p_coll, p_balle);
-
-    G_balle = CalculerG(p_balle, p_coll, n_balle, I_balle);
-    G_cube = CalculerG(p_cube, p_coll, n_cube, I_cube);
-
-    m_balle = 0.7;
+    m_balle = 0.07;
     m_cube = 0.58;
 
     % alpha = 1 / (1/ma + 1/mb + Ga + Gb)
@@ -67,15 +64,18 @@ end
 function G = CalculerG(p_object, p_coll, n, I_obj)
     roc = p_coll - p_object;
 
+    a = cross(roc, n);
+
+    b = cross(a, roc);
+
     % G = n [I^-1 (roc x n) x roc]
-    G = n * [inv(I_obj) * (cross(cross(roc, n), roc))'];
+    G = n * (inv(I_obj) * b');
 end
 
-function [n_balle, n_cube] = CalculerNormalUnitaire(p_coll, p_balle)
+function n_collision = CalculerNormalUnitaire(p_coll, p_balle)
     rcb = p_balle - p_coll;
     % La normale pointera toujours vers le centre du cercle
-    n_balle = rcb/sqrt(rcb(1)^2 + rcb(2)^2 + rcb(3)^2);
-    n_cube = -n_balle;
+    n_collision = rcb/sqrt(rcb(1)^2 + rcb(2)^2 + rcb(3)^2);
 end
 
 function voc = CalculerVitesseSelonPColl(p_obj, p_coll, vi, w)
@@ -96,7 +96,7 @@ end
 
 function vf = CalculerVitesseFinal(vi, j_obj, n, I_obj, roc, isCube)
     j = j_obj;
-    m = 0.7;
+    m = 0.07;
 
     if (isCube == 1)
         j = -j_obj;
@@ -112,5 +112,7 @@ end
 
 function wf = CalculerVitesseAngulaireFinal(wi, j_obj, n, I_obj, roc)
     % wf = wi -jI^-1 * (rbp x n)
-    wf = wi + ((-j_obj) * (inv(I_obj) * cross(roc, n)'))';
+    a = cross(roc, n);
+    b = inv(I_obj) * a';
+    wf = wi - (j_obj * (b))';
 end
