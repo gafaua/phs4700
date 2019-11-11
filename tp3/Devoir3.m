@@ -27,10 +27,6 @@ function [Touche, tf, blocf, ballef] = Devoir3(bloci, ballei, tl, idx = 1)
 	rbt = rbt + Err / 15;
 	blocf(1,:) = rbt(1:3);
 	ballef(1,:) = rbt(4:6);
-
-	% Plotter les résultats 
-	Plotter(rbt_cf, rbt_bf, idx);
-	pause(2);
 end
 
 
