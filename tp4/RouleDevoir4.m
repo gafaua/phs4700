@@ -6,8 +6,8 @@ clc ; clear all ; format loose %compact
 format long;
 close all ; 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% Définir les cas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-cm   = [4,4,11]; %--- centre de masse ellipsoïde
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Dï¿½finir les cas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cm   = [4,4,11]; %--- centre de masse ellipsoï¿½de
 rad    = 3; %--- x^2/(rad^2), y^2/(rad^2)
 bval   = 9; %--- z^2/(bval^2)
 Lame = [3 4; 3 5; 12 17];
