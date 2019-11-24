@@ -1,11 +1,4 @@
 function [xi,yi,zi,face] = Devoir4(nout, nin, dep)
-    # Etapes
-    # 1) Commencer au milieu
-    # 2) Shift a gauche jusqu'a ce que le rayon ne touche plus l'ellipsoide
-    # 3) Shift a droite """""""""""""""""""""""""""""""""""""""""""""""""
-    # 4) Shift en haut/ et repeter gauche/droite
-    # 5) Mm chose en bas
-    
     points = ScannerZ(nout, nin, dep);
 
     xi = points(:, 1);
@@ -24,8 +17,8 @@ function points = ScannerZ(nout, nin, dep)
 
     # On scan d'abord les z positifs.
     while RayonToucheEllispoide(dep, [4, 4, z])(1)
-        points_ = ScannerPlanXY(nout, nin, dep, z);
-        points = [points; points_];
+        pts = ScannerPlanXY(nout, nin, dep, z);
+        points = [points; pts];
         z += dz;
     end
 
@@ -33,14 +26,14 @@ function points = ScannerZ(nout, nin, dep)
 
     # On scan ensuite les z négatifs.
     while RayonToucheEllispoide(dep, [4, 4, z])(1)
-        points_ = ScannerPlanXY(nout, nin, dep, z);
-        points = [points; points_];
+        pts = ScannerPlanXY(nout, nin, dep, z);
+        points = [points; pts];
         z -= dz;
     end
 end
 
 # On scan un plan XY correspondant à un Z donné.
-function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
+function points = ScannerPlanXY(nout, nin, dep, z)
     # On commence avec le point milieu.
     x_initial = 4; 
     y_initial = 4;
@@ -52,10 +45,10 @@ function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
     points = [];
 
     # Vecteur directeur
-    vdir = [x_initial, y_initial, z];
+    pdir = [x_initial, y_initial, z];
 
     # On récupère le premier point de collision.
-    [collision, point_col] = RayonToucheEllispoide(dep, vdir);
+    [collision, point_col] = RayonToucheEllispoide(dep, pdir - dep);
 
     # On scan en se déplaçant vers les y négatifs tant que l'on touche l'ellipse.
     while (collision)        
@@ -69,14 +62,14 @@ function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
         end
 
         # Etape finale pour passer à next while step: Décrementer y.
-        vdir = [x_initial, vdir(2) - ds, z];
-        [collision, point_col] = RayonToucheEllispoide(dep, vdir)
+        pdir = [x_initial, pdir(2) - ds, z];
+        [collision, point_col] = RayonToucheEllispoide(dep, pdir - dep);
     end
 
     # On retourne au centre de l'ellipsoid - ds en x car deja évalué à x_initial.
-    vdir = [x_initial - ds, y_initial, z];
+    pdir = [x_initial - ds, y_initial, z];
 
-    [collision, point_col] = RayonToucheEllispoide(dep, vdir)
+    [collision, point_col] = RayonToucheEllispoide(dep, pdir - dep);
 
     # On scan en se déplaçant vers les x négatifs tant que l'on touche l'ellipse.
     while (collision)
@@ -90,8 +83,8 @@ function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
         end
 
         # Etape finale pour passer à next while step: Décrementer x.
-        vdir = [vdir(1) - ds, y_initial, z];
-        [collision, point_col] = RayonToucheEllispoide(dep, vdir)
+        pdir = [pdir(1) - ds, y_initial, z];
+        [collision, point_col] = RayonToucheEllispoide(dep, pdir - dep);
     end
 end 
 
@@ -108,8 +101,7 @@ function [coll_bloc, coord] = TrajectoireDansEllispsoide(depart, point, vecteur_
 
         if (coll)   %collision avec le bloc, ajoute le nouveau point et on arrête
             coll_bloc = true;
-            # TODO: C'est pas plutot le vdir initial qu'il faut utiliser?
-            nouveau_point = DeroulerRayon(depart, vdir, distance_totale);
+            nouveau_point = DeroulerRayon(depart, point - depart, distance_totale);
             coord = [nouveau_point(1), nouveau_point(2), nouveau_point(3), coll];
             
             return;
@@ -139,7 +131,7 @@ function [collision, point_contact] = RayonToucheEllispoide(p, u, interne = fals
     %En se basant sur l'équation de l'ellispoide
     % et sur l'équation de la droite passant par le point p de vecteur directeur u
     a = (u(1))^2 + (u(2))^2 + ((u(3))^2)/9;
-    b = (2*((u(1)*p(1)) + (u(2)*p(2)))) - (8*(u(1) + u(2))) + ((2/9)*((u(3)*P(3)) - 11*(u(3))));
+    b = (2*((u(1)*p(1)) + (u(2)*p(2)))) - (8*(u(1) + u(2))) + ((2/9)*((u(3)*p(3)) - 11*(u(3))));
     c = (328/9) + (p(1)^2) + (p(2)^2) - (8*(p(1) + p(2))) + ((1/9) * (p(3)^2 - 22*p(3)));
 
     facteurs = roots([a b c]);
@@ -203,17 +195,14 @@ function [collision, point_contact] = RayonCollisionInterne(p, u)
 
     [coll_ell, point_ell] = RayonToucheEllispoide(p, u, true);
 
-    if (face_proche)
+    if (face_proche && dist_min < norm(p - point_ell))
         %Vérification, le point de contact avec l'ellipsoide devrait être plus loin que celui avec une face
-        if (dist_min < norm(p - point_ell))
-            collision = face_proche;
-            point_contact = point_face;
-        end
+        collision = face_proche;
+        point_contact = point_face;
     else
         collision = 0;
         point_contact = point_ell;
     end
-    
 end
 
 function [collision, point_contact] = CollisionPlan(num_plan, p, u)
@@ -275,9 +264,7 @@ function [collision, point_contact] = CollisionPlan(num_plan, p, u)
             collision = false;
             point_contact = [0, 0, 0];
         end
-
     end
-
 end
 
 function col = DetecterColSurface(num_plan, P)
@@ -303,7 +290,6 @@ function col = DetecterColSurface(num_plan, P)
     elseif (num_plan == 5) col = PointSurFace(P, D, E, F);
     elseif (num_plan == 6) col = PointSurFace(P, A, B, C);
     end
-
 end
 
 function Entre = PointSurFace(P, P1, P2, P3)
@@ -319,38 +305,6 @@ function n = CalculerNormale(pcol)
     y = (pcol(2) -  4) / 9;
     z = (pcol(3) - 11) / 81;
     n = [x, y, z];
-end
-
-% Calculer position vue par observateur (7.42)
-function rp = CalculerPositionVue(pos_obs, pos_intersect, list_pos)
-    u = CalculerVUnit(pos_obs, pos_intersect);
-    d = CalculerDistanceTotale(list_pos);
-    % rp = ro + du
-    rp = pos_obs + d * u;
-end
-
-% Calculer le vecteur unitaire de image virtuelle (7.40)
-function u = CalculerVUnit(pos_obs, pos_intersect)
-    % r1 - r0
-    nominateur = pos_intersect - pos_obs;
-    % |r1 - r0| 
-    denominateur = norm(nominateur);
-    u = nominateur/denominateur;
-end
-
-% Calculer distance total parcourus (7.41)
-function d = CalculerDistanceTotale(list_pos)
-    dist = 0;
-    n = 0
-    for i=2: length(list_pos)
-        if n <= 100
-            % SUM (|ri - ri-1|)
-            dist += norm(list_pos(i), list_pos(i - 1));
-            n += 1;
-        end
-    end
-    
-    d = dist;
 end
 
 %reflexion: bool, si oui ou non il y a eu reflexion totale interne

@@ -7,8 +7,16 @@
         {
             "type": "OctaveDebugger",
             "request": "launch",
-            "name": "Function or file to execute.",
+            "name": "RouleDevoir4",
             "program": "RouleDevoir4",
+            "octave": "octave",
+            "sourceFolder": "${workspaceFolder}"
+        },
+        {
+            "type": "OctaveDebugger",
+            "request": "launch",
+            "name": "Devoir4",
+            "program": "Devoir4(1, 1, [0 0 5])",
             "octave": "octave",
             "sourceFolder": "${workspaceFolder}"
         }
