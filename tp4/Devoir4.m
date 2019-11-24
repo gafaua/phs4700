@@ -1,5 +1,4 @@
 function [xi,yi,zi,face] = Devoir4(nout, nin, dep)
-
     # Etapes
     # 1) Commencer au milieu
     # 2) Shift a gauche jusqu'a ce que le rayon ne touche plus l'ellipsoide
@@ -7,59 +6,61 @@ function [xi,yi,zi,face] = Devoir4(nout, nin, dep)
     # 4) Shift en haut/ et repeter gauche/droite
     # 5) Mm chose en bas
     
-    [xi, yi, zi, face] = ScannerZ(nout, nin, dep)
+    points = ScannerZ(nout, nin, dep);
+
+    xi = points(:, 1);
+    yi = points(:, 2);
+    zi = points(:, 3);
+    face = points(:, 4);
 end
 
-function [xi, yi, zi, face] = ScannerZ(nout, nin, dep)
-    z = 11;
-    dz = 0
+# Scan les rayons en longeant l'axe des Z.
+function points = ScannerZ(nout, nin, dep)
+    z = 11; # On commence au point milieu (CM de l'ellipsoid).
+    dz = 0.1; # Déplacement en z.
+
+    # Les points de contacts, déroulés. Format: [xi yi zi face;].
+    points = [];
+
+    # On scan d'abord les z positifs.
     while RayonToucheEllispoide(dep, [4, 4, z])(1)
-        [xi_, yi_, zi_, face_] = ScannerPlanXY(nout, nin, dep, z);
-        xi = [xi, xi_];
-        xi = [yi, yi_];
-        xi = [zi, zi_];
-        face = [face, face_];
+        points_ = ScannerPlanXY(nout, nin, dep, z);
+        points = [points; points_];
         z += dz;
     end
-    z = 11;
+
+    z = 11 - dz; # Retour au point milieu - dz car déjà évalué à 11.
+
+    # On scan ensuite les z négatifs.
     while RayonToucheEllispoide(dep, [4, 4, z])(1)
-        [xi_, yi_, zi_, face_] = ScannerPlanXY(nout, nin, dep, z);
-        xi = [xi, xi_];
-        xi = [yi, yi_];
-        xi = [zi, zi_];
-        face = [face, face_];
+        points_ = ScannerPlanXY(nout, nin, dep, z);
+        points = [points; points_];
         z -= dz;
     end
 end
 
+# On scan un plan XY correspondant à un Z donné.
 function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
-    # On commence avec le plan milieu
-    x_initial = 4;
+    # On commence avec le point milieu.
+    x_initial = 4; 
     y_initial = 4;
+
+    # Delta directeur.
+    ds = 0.1;
+
+    # Les points de contacts, déroulés. Format: [xi yi zi face;]
+    points = [];
 
     # Vecteur directeur
     vdir = [x_initial, y_initial, z];
-    
-    # Delta directeur
-    ds = 0.1;
-    
-    points = []; # Matrice contenant nos [xi, yi, zi, face] pour chaque point_contact.
-    
-    [collision, point_col] = RayonToucheEllispoide(dep, vdir)
+
+    # On récupère le premier point de collision.
+    [collision, point_col] = RayonToucheEllispoide(dep, vdir);
+
     # On scan en se déplaçant vers les y négatifs tant que l'on touche l'ellipse.
-    while (collision)
-        # 1) Trouver réfraction
-        # 2) Trouver nouvelle trajectoire rayon
-        # 3) Détecter collision
-        #   a) Si bloc -> Dérouler et ajouter [xi, yi, zi, face] à points
-        #   b) Si ellipse, trouver réfraction et nouvelle trajectoire
-        #       b1) Si dehors, sortir
-        #       b2) Si dedans, continuer récursivement jusqu'à collision ou n = 100
-        # 4) Décrementer y
-        
+    while (collision)        
         [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(point_col - dep, point_col, nout, nin);
         if (!reflexion) %Le rayon lumineux rentre dans l'ellipsoide
-
             [coll_bloc, coord] = TrajectoireDansEllispsoide(dep, point_col, nouveau_vdir, nin, nout);
 
             if (coll_bloc)
@@ -67,35 +68,34 @@ function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
             end
         end
 
-        # Etape finale pour passer à next while step
+        # Etape finale pour passer à next while step: Décrementer y.
         vdir = [x_initial, vdir(2) - ds, z];
         [collision, point_col] = RayonToucheEllispoide(dep, vdir)
     end
 
-    # On retourne au centre
-    vdir = [x_initial, y_initial, z];
+    # On retourne au centre de l'ellipsoid - ds en x car deja évalué à x_initial.
+    vdir = [x_initial - ds, y_initial, z];
 
     [collision, point_col] = RayonToucheEllispoide(dep, vdir)
 
-    ## TODO PART BOTTOM
     # On scan en se déplaçant vers les x négatifs tant que l'on touche l'ellipse.
     while (collision)
-        # 1) Trouver réfraction
-        # 2) Trouver nouvelle trajectoire rayon
-        # 3) Détecter collision
-        #   a) Si bloc -> Dérouler et ajouter [xi, yi, zi, face] à points
-        #   b) Si ellipse, trouver réfraction et nouvelle trajectoire
-        #       b1) Si dehors, sortir
-        #       b2) Si dedans, continuer récursivement jusqu'à collision ou n = 100
+        [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(point_col - dep, point_col, nout, nin);
+        if (!reflexion) %Le rayon lumineux rentre dans l'ellipsoide
+            [coll_bloc, coord] = TrajectoireDansEllispsoide(dep, point_col, nouveau_vdir, nin, nout);
 
-        # 4) Décrementer x
+            if (coll_bloc)
+                points = [points; coord];
+            end
+        end
+
+        # Etape finale pour passer à next while step: Décrementer x.
         vdir = [vdir(1) - ds, y_initial, z];
+        [collision, point_col] = RayonToucheEllispoide(dep, vdir)
     end
 end 
 
-
 function [coll_bloc, coord] = TrajectoireDansEllispsoide(depart, point, vecteur_directeur, nin, nout)
-    
     point1 = point;
     vdir = vecteur_directeur;
 
@@ -108,6 +108,7 @@ function [coll_bloc, coord] = TrajectoireDansEllispsoide(depart, point, vecteur_
 
         if (coll)   %collision avec le bloc, ajoute le nouveau point et on arrête
             coll_bloc = true;
+            # TODO: C'est pas plutot le vdir initial qu'il faut utiliser?
             nouveau_point = DeroulerRayon(depart, vdir, distance_totale);
             coord = [nouveau_point(1), nouveau_point(2), nouveau_point(3), coll];
             
@@ -365,6 +366,7 @@ function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1,
 
     angle_critique = abs(asin(n2/n1));
 
+    # TODO: Checker le n1 < n2. C'est pas juste la formule avec le sin dans les ndc?
     reflexion = n1 < n2 && (abs(theta1) > angle_critique);
     
     if (reflexion)
