@@ -63,5 +63,5 @@ for itst=1:4
   end
   hold;
   toc
-  % pause
+  pause
 end
