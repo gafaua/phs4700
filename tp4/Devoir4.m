@@ -43,7 +43,7 @@ function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
     # Delta directeur
     ds = 0.1;
     
-    points = []; # Matrice contenant nos [xi, yi, zi, face] pour chaque point.
+    points = []; # Matrice contenant nos [xi, yi, zi, face] pour chaque point_contact.
     
     [collision, point_col] = RayonToucheEllispoide(dep, vdir)
     # On scan en se déplaçant vers les y négatifs tant que l'on touche l'ellipse.
@@ -56,15 +56,20 @@ function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
         #       b1) Si dehors, sortir
         #       b2) Si dedans, continuer récursivement jusqu'à collision ou n = 100
         # 4) Décrementer y
-        [reflection, theta] = CalculerRefraction(point_col - dep, point_col, nout, nin);
-        if (!reflection)
-            # TODO: CONTINUE HERE
+        
+        [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(point_col - dep, point_col, nout, nin);
+        if (!reflexion) %Le rayon lumineux rentre dans l'ellipsoide
 
+            [coll_bloc, coord] = TrajectoireDansEllispsoide(dep, point_col, nouveau_vdir, nin, nout);
 
-            # Etape finale pour passer à next while step
-            vdir = [x_initial, vdir(2) - ds, z];
-            [collision, point_col] = RayonToucheEllispoide(dep, vdir)
+            if (coll_bloc)
+                points = [points; coord];
+            end
         end
+
+        # Etape finale pour passer à next while step
+        vdir = [x_initial, vdir(2) - ds, z];
+        [collision, point_col] = RayonToucheEllispoide(dep, vdir)
     end
 
     # On retourne au centre
@@ -88,15 +93,45 @@ function [xi, yi, zi, face] = ScannerPlanXY(nout, nin, dep, z)
     end
 end 
 
-function [todo] = LoopInterne()
-    # A L'INTERIEUR DE L'ELLIPSE
 
+function [coll_bloc, coord] = TrajectoireDansEllispsoide(depart, point, vecteur_directeur, nin, nout)
+    
+    point1 = point;
+    vdir = vecteur_directeur;
+
+    distance_totale = norm(point - depart);    %On commence à mesurer la distance totale parcourue par le rayon
+    
+    for n=1:100
+        [coll, point2] = RayonCollisionInterne(point1, vdir);
+
+        distance_totale += norm(point2 - point1);
+
+        if (coll)   %collision avec le bloc, ajoute le nouveau point et on arrête
+            coll_bloc = true;
+            nouveau_point = DeroulerRayon(depart, vdir, distance_totale);
+            coord = [nouveau_point(1), nouveau_point(2), nouveau_point(3), coll];
+            
+            return;
+        else        %collision avec l'ellipsoide, on arrête si le rayon sort de l'ellispoide
+            [reflexion, vdir] = CalculerNouvelleTrajectoire(point2 - point1, point2, nin, nout)
+            
+            if (!reflexion)
+                break;
+            end
+
+            point1 = point2;
+        end
+    end
+
+    coll_bloc = false;
+    coord = [0, 0, 0, 0];
 end
 
-%p: point par lequel passe le rayon (position de l'observateur)
-%u: vecteur directeur de la droite
-%interne: si la collision a lieu à l'intérieur de l'ellispoide, le point p est sur l'ellipsoide
-function [collision, point] = RayonToucheEllispoide(p, u, interne = false)
+
+%p: point_contact par lequel passe le rayon (position de l'observateur)
+%nouveau_vdir: vecteur directeur de la droite
+%interne: si la collision a lieu à l'intérieur de l'ellispoide, le point_contact p est sur l'ellipsoide
+function [collision, point_contact] = RayonToucheEllispoide(p, u, interne = false)
     %formule de l'ellipsoide
     %((x-4)^2)/9 + ((y-4)^2)/9 + ((z-11)^2)/81 = 1
 
@@ -110,22 +145,22 @@ function [collision, point] = RayonToucheEllispoide(p, u, interne = false)
 
     if (isreal(facteurs))
         if (facteurs(1) == facteurs(2))
-            point = p + u * facteurs(1);
+            point_contact = p + u * facteurs(1);
         else
             P1 = p + u * facteurs(1);
             P2 = p + u * facteurs(2);
             %Choisir le point le plus proche de l'observateur placé en p
             if (norm(p - P1) < norm(p - P2))
                 if (interne)
-                    point = P2;
+                    point_contact = P2;
                 else
-                    point = P1;
+                    point_contact = P1;
                 end
             else
                 if (interne)
-                    point = P1;
+                    point_contact = P1;
                 else
-                    point = P2;
+                    point_contact = P2;
                 end
             end
         end
@@ -133,7 +168,7 @@ function [collision, point] = RayonToucheEllispoide(p, u, interne = false)
         collision = true;
     else
         collision = false;
-        point = [0, 0, 0];
+        point_contact = [0, 0, 0];
     end
 end
 
@@ -144,7 +179,7 @@ end
 %           4 = collision avec face 4
 %           5 = collision avec face 5
 %           6 = collision avec face 6
-function [collision, point] = RayonCollisionInterne(p, u)
+function [collision, point_contact] = RayonCollisionInterne(p, u)
     %Trouver les collisions avec les 6 plans
     %Vérifier que les points de contacts sont bien sur les faces du bloc
     %Garder le point de contact le plus proche pour être sûr de ne pas entrer en contact par l'intérieur
@@ -171,73 +206,73 @@ function [collision, point] = RayonCollisionInterne(p, u)
         %Vérification, le point de contact avec l'ellipsoide devrait être plus loin que celui avec une face
         if (dist_min < norm(p - point_ell))
             collision = face_proche;
-            point = point_face;
+            point_contact = point_face;
         end
     else
         collision = 0;
-        point = point_ell;
+        point_contact = point_ell;
     end
     
 end
 
-function [collision, point] = CollisionPlan(num_plan, p, u)
+function [collision, point_contact] = CollisionPlan(num_plan, p, u)
     if (num_plan == 1)
         %(1) -> x = 3
         if (u(1) != 0)
             collision = true;
-            point = p + u * ((3 - p(1))/u(1));
+            point_contact = p + u * ((3 - p(1))/u(1));
         else
             collision = false;
-            point = [0, 0, 0];
+            point_contact = [0, 0, 0];
         end
     elseif (num_plan == 2)
         %(2) -> x = 4
         if (u(1) != 0)
             collision = true;
-            point = p + u * ((4 - p(1))/u(1));
+            point_contact = p + u * ((4 - p(1))/u(1));
         else
             collision = false;
-            point = [0, 0, 0];
+            point_contact = [0, 0, 0];
         end
 
     elseif (num_plan == 3)    
         %(3) -> y = 3
         if (u(2) != 0)
             collision = true;
-            point = p + u * ((3 - p(2))/u(2));
+            point_contact = p + u * ((3 - p(2))/u(2));
         else
             collision = false;
-            point = [0, 0, 0];
+            point_contact = [0, 0, 0];
         end
 
     elseif (num_plan == 4)
         %(4) -> y = 5
         if (u(2) != 0)
             collision = true;
-            point = p + u * ((5 - p(2))/u(2));
+            point_contact = p + u * ((5 - p(2))/u(2));
         else
             collision = false;
-            point = [0, 0, 0];
+            point_contact = [0, 0, 0];
         end
 
     elseif (num_plan == 5)
         %(5) -> z = 12
         if (u(3) != 0)
             collision = true;
-            point = p + u * ((12 - p(3))/u(3));
+            point_contact = p + u * ((12 - p(3))/u(3));
         else
             collision = false;
-            point = [0, 0, 0];
+            point_contact = [0, 0, 0];
         end
 
     elseif (num_plan == 6)    
         %(6) -> z = 17
         if (u(3) != 0)
             collision = true;
-            point = p + u * ((17 - p(3))/u(3));
+            point_contact = p + u * ((17 - p(3))/u(3));
         else
             collision = false;
-            point = [0, 0, 0];
+            point_contact = [0, 0, 0];
         end
 
     end
@@ -317,27 +352,32 @@ function d = CalculerDistanceTotale(list_pos)
     d = dist;
 end
 
-% Calculer l'angle critique
-% teta = |arcsin(n2/n1)|
-function [reflection, theta2]= CalculerRefraction(vdir, pcol, n1, n2)
-    % 1) Calculer l'angle critique
-    % 2) Calculer le Theta entre le vecteur qui touche le ell et la normal
-    % 3) si angle
-    reflection = false;
-    
+%reflexion: bool, si oui ou non il y a eu reflexion totale interne
+%nouveau_vdir: vecteur, nouveau vecteur directeur représentant la nouvelle
+%              trajectoire du rayon
+
+function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1, n2)
+    %Vérifier si il y a reflexion ou refraction,
+    %retourner le nouveau vecteur directeur du rayon
+
     normale = CalculerNormale(pcol);
     theta1 = AngleEntreVecteurs(vdir, normale);
 
-    theta2 = asin(n1/n2 * sin(theta1));
+    angle_critique = abs(asin(n2/n1));
 
-    if (abs(theta2) > 1)
-        reflection = true
+    reflexion = n1 < n2 && (abs(theta1) > angle_critique);
+    
+    if (reflexion)
+        nouveau_vdir = vdir + 2*cos(theta1)*normale;
+    else
+        theta2 = asin(n1/n2 * sin(theta1));
+        nouveau_vdir = (n1/n2)*vdir + (((n1/n2)*cos(theta1)) - abs(cos(theta2)))*normale;
     end
 end
 
-function theta = angle(u, v)
-    costheta = u * v / (norm(u) * norm(v));
-    theta = acos(costheta);
+%Calcule l'angle entre les vecteurs u1 et u2
+function angle = AngleEntreVecteurs(u1, u2)
+    angle = acos(dot(u1,u2)/(norm(u1)*norm(u2)));
 end
 
 %p: position de l'observateur
@@ -345,5 +385,5 @@ end
 %D: distance totale parcourue par le rayon
 %point: point composant l'image virtuelle
 function point = DeroulerRayon(p, u, D)
-    point = p + u * D/norm(u);
+    point = p + (u/norm(u)) * D;
 end
