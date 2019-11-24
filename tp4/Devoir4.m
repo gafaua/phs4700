@@ -315,18 +315,21 @@ function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1,
     %Vérifier si il y a reflexion ou refraction,
     %retourner le nouveau vecteur directeur du rayon
 
-    normale = CalculerNormale(pcol);
-    theta1 = AngleEntreVecteurs(vdir, normale);
+    n = CalculerNormale(pcol);
+    % vecteurs i et k venant du document de référence, utiles pour les calculs suivants
+    vec_i = n/norm(n);
+    j_ = cross(vdir, vec_i);
+    vec_k = cross(vec_i, j_/norm(j_));
 
+    theta1 = AngleEntreVecteurs(vdir, n);
     theta2 = asind(n1/n2 * sind(theta1));
 
-    # TODO: Checker le n1 < n2. C'est pas juste la formule avec le sin dans les ndc?
     reflexion = abs(sind(theta2)) > 1;
     
     if (reflexion)
-        nouveau_vdir = vdir + 2*cosd(theta1)*normale;
+        nouveau_vdir = cosd(theta1)*vec_i + sind(theta1)*vec_k;
     else
-        nouveau_vdir = (n1/n2)*vdir + (((n1/n2)*cosd(theta1)) - abs(cosd(theta2)))*normale;
+        nouveau_vdir = -cosd(theta2)*vec_i + sind(theta2)*vec_k;
     end
 end
 
