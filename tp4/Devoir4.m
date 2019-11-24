@@ -288,12 +288,12 @@ function col = DetecterColSurface(num_plan, P)
     %           5 -> DEF
     %           6 -> ABC
 
-    A = (3, 3, 17);
-    B = (4, 3, 17);
-    C = (4, 5, 17);
-    D = (4, 5, 12);
-    E = (3, 5, 12);
-    F = (3, 3, 12);
+    A = [3, 3, 17];
+    B = [4, 3, 17];
+    C = [4, 5, 17];
+    D = [4, 5, 12];
+    E = [3, 5, 12];
+    F = [3, 3, 12];
      
     if (num_plan == 1)     col = PointSurFace(P, A, E, F);
     elseif (num_plan == 2) col = PointSurFace(P, B, C, D);
