@@ -290,15 +290,16 @@ function col = DetecterColSurface(num_plan, P)
     E = [3, 5, 12];
     F = [3, 3, 12];
      
-    if (num_plan == 1)     col = PointSurFace(P, A, E, F);
+    if (num_plan == 1)     col = PointSurFace(P, A, F, E);
     elseif (num_plan == 2) col = PointSurFace(P, B, C, D);
-    elseif (num_plan == 3) col = PointSurFace(P, A, B, F);
+    elseif (num_plan == 3) col = PointSurFace(P, B, A, F);
     elseif (num_plan == 4) col = PointSurFace(P, C, D, E);
     elseif (num_plan == 5) col = PointSurFace(P, D, E, F);
     elseif (num_plan == 6) col = PointSurFace(P, A, B, C);
     end
 end
 
+%CETTE FONCTION PREND EN COMPTE QUE P2 EST ENTRE P1 ET P3
 function Entre = PointSurFace(P, P1, P2, P3)
     P4 = P3 + (P1 - P2);
     norme_u = norm(P1 - P3);
