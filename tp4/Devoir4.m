@@ -113,7 +113,7 @@ function [coll_bloc, coord] = TrajectoireDansEllispsoide(depart, point, vecteur_
             
             return;
         else        %collision avec l'ellipsoide, on arrête si le rayon sort de l'ellispoide
-            [reflexion, vdir] = CalculerNouvelleTrajectoire(point2 - point1, point2, nin, nout)
+            [reflexion, vdir] = CalculerNouvelleTrajectoire(point2 - point1, point2, nin, nout);
             
             if (!reflexion)
                 break;
