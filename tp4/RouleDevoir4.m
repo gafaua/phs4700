@@ -44,7 +44,7 @@ for itst=1:4
   line(Face56x,Face56y,Face5z,'Color',[0.6 0.6 0.6]);
   line(Face56x,Face56y,Face6z,'Color',[0.6 0.6 0.6]);
   axis equal
-  [xi,yi,zi,face] = Devoir4(nout(itst),nin(itst),dep(itst,:));
+  [xi,yi,zi,face]=Devoir4(nout(itst),nin(itst),dep(itst,:));
   nbpoint=length(face);
   for ipoint=1:nbpoint
     if face(ipoint) == 1
@@ -61,8 +61,7 @@ for itst=1:4
       plot3([xi(ipoint)],[yi(ipoint)],[zi(ipoint)],'m.');
     end
   end
-  % hold;
+  hold;
   toc
-  fprintf('YES');
   % pause
 end

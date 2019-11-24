@@ -318,22 +318,21 @@ function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1,
     normale = CalculerNormale(pcol);
     theta1 = AngleEntreVecteurs(vdir, normale);
 
-    angle_critique = abs(asin(n2/n1));
+    theta2 = asind(n1/n2 * sind(theta1));
 
     # TODO: Checker le n1 < n2. C'est pas juste la formule avec le sin dans les ndc?
-    reflexion = n1 < n2 && (abs(theta1) > angle_critique);
+    reflexion = abs(sind(theta2)) > 1;
     
     if (reflexion)
-        nouveau_vdir = vdir + 2*cos(theta1)*normale;
+        nouveau_vdir = vdir + 2*cosd(theta1)*normale;
     else
-        theta2 = asin(n1/n2 * sin(theta1));
-        nouveau_vdir = (n1/n2)*vdir + (((n1/n2)*cos(theta1)) - abs(cos(theta2)))*normale;
+        nouveau_vdir = (n1/n2)*vdir + (((n1/n2)*cosd(theta1)) - abs(cosd(theta2)))*normale;
     end
 end
 
 %Calcule l'angle entre les vecteurs u1 et u2
 function angle = AngleEntreVecteurs(u1, u2)
-    angle = acos(dot(u1,u2)/(norm(u1)*norm(u2)));
+    angle = acosd(dot(u1,u2)/(norm(u1)*norm(u2)));
 end
 
 %p: position de l'observateur
