@@ -10,29 +10,29 @@ end
 % Scan les rayons en longeant l'axe des Z.
 function points = ScannerZ(nout, nin, dep)
     z = 11; % On commence au point milieu (CM de l'ellipsoid).
-    dz = 0.1; % Déplacement en z.
+    dz = 0.1; % delta z.
 
     % Les points de contacts, déroulés. Format: [xi yi zi face;].
     points = [];
 
     % On scan d'abord les z positifs.
-    [collision, ~] = RayonToucheEllispoide(dep, [4, 4, z]);
+    [collision, ~] = RayonToucheEllispoide(dep, [4, 4, z] - dep);
     while (collision)
         pts = ScannerPlanXY(nout, nin, dep, z);
         points = [points; pts];
         z = z + dz;
-        [collision, ~] = RayonToucheEllispoide(dep, [4, 4, z]);
+        [collision, ~] = RayonToucheEllispoide(dep, [4, 4, z] - dep);
     end
 
     z = 11 - dz; % Retour au point milieu - dz car déjà évalué à 11.
 
     % On scan ensuite les z négatifs.
-    [collision, ~] = RayonToucheEllispoide(dep, [4, 4, z]);
+    [collision, ~] = RayonToucheEllispoide(dep, [4, 4, z] - dep);
     while (collision)
         pts = ScannerPlanXY(nout, nin, dep, z);
         points = [points; pts];
         z = z - dz;
-        [collision, ~] = RayonToucheEllispoide(dep, [4, 4, z]);
+        [collision, ~] = RayonToucheEllispoide(dep, [4, 4, z] - dep);
     end
 end
 
