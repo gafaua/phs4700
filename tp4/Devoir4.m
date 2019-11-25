@@ -10,7 +10,7 @@ end
 % Scan les rayons en longeant l'axe des Z.
 function points = ScannerZ(nout, nin, dep)
     z = 11; % On commence au point milieu (CM de l'ellipsoid).
-    dz = 0.1; % delta z.
+    dz = 0.01; % delta z.
 
     % Les points de contacts, déroulés. Format: [xi yi zi face;].
     points = [];
@@ -43,7 +43,7 @@ function points = ScannerPlanXY(nout, nin, dep, z)
     y_initial = 4;
 
     % Delta directeur.
-    ds = 0.1;
+    ds = 0.01;
 
     % Les points de contacts, déroulés. Format: [xi yi zi face;]
     points = [];
@@ -310,14 +310,6 @@ end
 function collision = CollisionPlanYZ(p)
     collision = p(2) >= 3 && p(2) <= 5 && p(3) >= 12 && p(3) <= 17;
 end
-
-% %CETTE FONCTION PREND EN COMPTE QUE P2 EST ENTRE P1 ET P3
-% function Entre = PointSurFace(P, P1, P2, P3)
-%     P4 = P3 + (P1 - P2);
-%     norme_u = norm(P1 - P3);
-
-%     Entre = norm(P1-P) <= norme_u && norm(P2-P) <= norme_u && norm(P3-P) <= norme_u && norm(P4-P) <= norme_u;
-% end
 
 % Calculer la normal sur l'ellipsoide
 function n = CalculerNormale(pcol)
