@@ -290,12 +290,12 @@ function col = DetecterColSurface(num_plan, P)
     E = [3, 5, 12];
     F = [3, 3, 12];
      
-    if (num_plan == 1)     col = CollisionPlanYZ(P)
-    elseif (num_plan == 2) col = CollisionPlanYZ(P)
-    elseif (num_plan == 3) col = CollisionPlanXZ(P)
-    elseif (num_plan == 4) col = CollisionPlanXZ(P)
-    elseif (num_plan == 5) col = CollisionPlanXY(P)
-    elseif (num_plan == 6) col = CollisionPlanXY(P)
+    if (num_plan == 1)     col = CollisionPlanYZ(P);
+    elseif (num_plan == 2) col = CollisionPlanYZ(P);
+    elseif (num_plan == 3) col = CollisionPlanXZ(P);
+    elseif (num_plan == 4) col = CollisionPlanXZ(P);
+    elseif (num_plan == 5) col = CollisionPlanXY(P);
+    elseif (num_plan == 6) col = CollisionPlanXY(P);
     end
 end
 
