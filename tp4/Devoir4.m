@@ -344,7 +344,7 @@ function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1,
 
     if (n1 > n2) 
         thetac = asind(n2/n1);
-        if (theta1 <= thetac)
+        if (abs(theta1 - 90) <= thetac)
             reflexion = 1;
         end
     end
