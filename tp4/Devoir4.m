@@ -327,24 +327,23 @@ function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1,
     %Vérifier si il y a reflexion ou refraction,
     %retourner le nouveau vecteur directeur du rayon
 
-    n = CalculerNormale(pcol);
+    vec_i = CalculerNormale(pcol);
 
     if (inside)
-        n = -1 * n;
+        vec_i = -1 * vec_i;
     end
 
     % vecteurs i et k venant du document de référence, utiles pour les calculs suivants
-    vec_i = n/norm(n);
     j_ = cross(vdir, vec_i);
     vec_k = cross(vec_i, j_/norm(j_));
 
-    theta1 = AngleEntreVecteurs(vdir, n);
+    theta1 = AngleEntreVecteurs(vdir, vec_i);
 
     reflexion = 0;
 
     if (n1 > n2) 
         thetac = asind(n2/n1);
-        if (abs(theta1 - 90) <= thetac)
+        if (theta1 <= thetac)
             reflexion = 1;
         end
     end
@@ -360,6 +359,10 @@ end
 %Calcule l'angle entre les vecteurs u1 et u2
 function angle = AngleEntreVecteurs(u1, u2)
     angle = acosd(dot(u1,u2)/(norm(u1)*norm(u2)));
+
+    if (angle)
+        angle = angle - 90;
+    end 
 end
 
 %p: position de l'observateur
