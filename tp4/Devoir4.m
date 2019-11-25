@@ -290,22 +290,34 @@ function col = DetecterColSurface(num_plan, P)
     E = [3, 5, 12];
     F = [3, 3, 12];
      
-    if (num_plan == 1)     col = PointSurFace(P, A, F, E);
-    elseif (num_plan == 2) col = PointSurFace(P, B, C, D);
-    elseif (num_plan == 3) col = PointSurFace(P, B, A, F);
-    elseif (num_plan == 4) col = PointSurFace(P, C, D, E);
-    elseif (num_plan == 5) col = PointSurFace(P, D, E, F);
-    elseif (num_plan == 6) col = PointSurFace(P, A, B, C);
+    if (num_plan == 1)     col = CollisionPlanYZ(P)
+    elseif (num_plan == 2) col = CollisionPlanYZ(P)
+    elseif (num_plan == 3) col = CollisionPlanXZ(P)
+    elseif (num_plan == 4) col = CollisionPlanXZ(P)
+    elseif (num_plan == 5) col = CollisionPlanXY(P)
+    elseif (num_plan == 6) col = CollisionPlanXY(P)
     end
 end
 
-%CETTE FONCTION PREND EN COMPTE QUE P2 EST ENTRE P1 ET P3
-function Entre = PointSurFace(P, P1, P2, P3)
-    P4 = P3 + (P1 - P2);
-    norme_u = norm(P1 - P3);
-
-    Entre = norm(P1-P) <= norme_u && norm(P2-P) <= norme_u && norm(P3-P) <= norme_u && norm(P4-P) <= norme_u;
+function collision = CollisionPlanXY(p)
+    collision = p(1) >= 3 && p(1) <= 4 && p(2) >= 3 && p(2) <= 5;
 end
+
+function collision = CollisionPlanXZ(p)
+    collision = p(1) >= 3 && p(1) <= 4 && p(3) >= 12 && p(3) <= 17;
+end
+
+function collision = CollisionPlanYZ(p)
+    collision = p(2) >= 3 && p(2) <= 5 && p(3) >= 12 && p(3) <= 17;
+end
+
+% %CETTE FONCTION PREND EN COMPTE QUE P2 EST ENTRE P1 ET P3
+% function Entre = PointSurFace(P, P1, P2, P3)
+%     P4 = P3 + (P1 - P2);
+%     norme_u = norm(P1 - P3);
+
+%     Entre = norm(P1-P) <= norme_u && norm(P2-P) <= norme_u && norm(P3-P) <= norme_u && norm(P4-P) <= norme_u;
+% end
 
 % Calculer la normal sur l'ellipsoide
 function n = CalculerNormale(pcol)
