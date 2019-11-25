@@ -10,7 +10,7 @@ end
 % Scan les rayons en longeant l'axe des Z.
 function points = ScannerZ(nout, nin, dep)
     z = 11; % On commence au point milieu (CM de l'ellipsoid).
-    dz = 0.01; % delta z.
+    dz = 0.1; % delta z.
 
     % Les points de contacts, déroulés. Format: [xi yi zi face;].
     points = [];
@@ -43,7 +43,7 @@ function points = ScannerPlanXY(nout, nin, dep, z)
     y_initial = 4;
 
     % Delta directeur.
-    ds = 0.01;
+    ds = 0.1;
 
     % Les points de contacts, déroulés. Format: [xi yi zi face;]
     points = [];
@@ -56,7 +56,7 @@ function points = ScannerPlanXY(nout, nin, dep, z)
 
     % On scan en se déplaçant vers les y négatifs tant que l'on touche l'ellipse.
     while (collision)        
-        [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(point_col - dep, point_col, nout, nin);
+        [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(point_col - dep, point_col, nout, nin, false);
         if (~reflexion) % Le rayon lumineux rentre dans l'ellipsoide
             [coll_bloc, coord] = TrajectoireDansEllispsoide(dep, point_col, nouveau_vdir, nin, nout);
 
@@ -77,7 +77,7 @@ function points = ScannerPlanXY(nout, nin, dep, z)
 
     % On scan en se déplaçant vers les x négatifs tant que l'on touche l'ellipse.
     while (collision)
-        [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(point_col - dep, point_col, nout, nin);
+        [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(point_col - dep, point_col, nout, nin, false);
         if (~reflexion) %Le rayon lumineux rentre dans l'ellipsoide
             [coll_bloc, coord] = TrajectoireDansEllispsoide(dep, point_col, nouveau_vdir, nin, nout);
 
@@ -110,7 +110,7 @@ function [coll_bloc, coord] = TrajectoireDansEllispsoide(depart, point, vecteur_
             
             return;
         else        %collision avec l'ellipsoide, on arrête si le rayon sort de l'ellispoide
-            [reflexion, vdir] = CalculerNouvelleTrajectoire(point2 - point1, point2, nin, nout);
+            [reflexion, vdir] = CalculerNouvelleTrajectoire(point2 - point1, point2, nin, nout, true);
             
             if (~reflexion)
                 break;
@@ -323,11 +323,16 @@ end
 %nouveau_vdir: vecteur, nouveau vecteur directeur représentant la nouvelle
 %              trajectoire du rayon
 
-function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1, n2)
+function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1, n2, inside)
     %Vérifier si il y a reflexion ou refraction,
     %retourner le nouveau vecteur directeur du rayon
 
     n = CalculerNormale(pcol);
+
+    if (inside)
+        n = -1 * n;
+    end
+
     % vecteurs i et k venant du document de référence, utiles pour les calculs suivants
     vec_i = n/norm(n);
     j_ = cross(vdir, vec_i);
@@ -336,7 +341,9 @@ function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1,
     theta1 = AngleEntreVecteurs(vdir, n);
     theta2 = asind(n1/n2 * sind(theta1));
     
-    reflexion = abs(sind(theta2)) > 1;
+    res = abs(sind(theta2));
+
+    reflexion = res > 1;
     
     if (reflexion)
         nouveau_vdir = cosd(theta1)*vec_i + sind(theta1)*vec_k;

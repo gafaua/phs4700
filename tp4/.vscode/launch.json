@@ -16,7 +16,7 @@
             "type": "OctaveDebugger",
             "request": "launch",
             "name": "GasparDevoir4",
-            "program": "Devoir4(1, 1, [0 0 5])",
+            "program": "Devoir4(1, 1.5, [0 0 5])",
             "octave": "C:/Octave/Octave-5.1.0.0/mingw64/bin/octave-cli",
             "sourceFolder": "${workspaceFolder}"
         },
