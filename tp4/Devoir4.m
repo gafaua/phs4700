@@ -276,9 +276,9 @@ end
 
 function col = DetecterColSurface(num_plan, P)
     % Collision sur une surface 
-    % num_plan: 1 -> AEF
+    % num_plan: 1 -> AFE
     %           2 -> BCD
-    %           3 -> ABF
+    %           3 -> BAF
     %           4 -> CDE
     %           5 -> DEF
     %           6 -> ABC
