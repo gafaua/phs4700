@@ -17,7 +17,7 @@ dep  = [0 0 5; 0 0 5; 0 0 0; 0 0 5];
 
 for itst=1:4
   tic
-  clf;
+  clf; 
   hold;
   plot3([dep(itst,1)],[dep(itst,2)],[dep(itst,3)],'ko');
   [x, y, z] = ellipsoid(cm(1),cm(2),cm(3),rad,rad,bval,30);
