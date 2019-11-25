@@ -10,7 +10,7 @@ end
 % Scan les rayons en longeant l'axe des Z.
 function points = ScannerZ(nout, nin, dep)
     z = 11; % On commence au point milieu (CM de l'ellipsoid).
-    dz = 0.1; % delta z.
+    dz = 0.05; % delta z.
 
     % Les points de contacts, déroulés. Format: [xi yi zi face;].
     points = [];
@@ -43,7 +43,7 @@ function points = ScannerPlanXY(nout, nin, dep, z)
     y_initial = 4;
 
     % Delta directeur.
-    ds = 0.1;
+    ds = 0.05;
 
     % Les points de contacts, déroulés. Format: [xi yi zi face;]
     points = [];
