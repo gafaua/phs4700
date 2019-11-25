@@ -7,7 +7,7 @@
         {
             "type": "OctaveDebugger",
             "request": "launch",
-            "name": "RouleDevoir4",
+            "name": "GasparRouleDevoir4",
             "program": "RouleDevoir4",
             "octave": "C:/Octave/Octave-5.1.0.0/mingw64/bin/octave-cli",
             "sourceFolder": "${workspaceFolder}"
@@ -15,9 +15,25 @@
         {
             "type": "OctaveDebugger",
             "request": "launch",
-            "name": "Devoir4",
+            "name": "GasparDevoir4",
             "program": "Devoir4(1, 1, [0 0 5])",
             "octave": "C:/Octave/Octave-5.1.0.0/mingw64/bin/octave-cli",
+            "sourceFolder": "${workspaceFolder}"
+        },
+        {
+            "type": "OctaveDebugger",
+            "request": "launch",
+            "name": "RouleDevoir4",
+            "program": "RouleDevoir4",
+            "octave": "octave",
+            "sourceFolder": "${workspaceFolder}"
+        },
+        {
+            "type": "OctaveDebugger",
+            "request": "launch",
+            "name": "Devoir4",
+            "program": "Devoir4(1, 1, [0 0 5])",
+            "octave": "octave",
             "sourceFolder": "${workspaceFolder}"
         }
     ]

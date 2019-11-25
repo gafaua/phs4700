@@ -57,7 +57,7 @@ function points = ScannerPlanXY(nout, nin, dep, z)
     % On scan en se déplaçant vers les y négatifs tant que l'on touche l'ellipse.
     while (collision)        
         [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(point_col - dep, point_col, nout, nin);
-        if (~reflexion) %Le rayon lumineux rentre dans l'ellipsoide
+        if (~reflexion) % Le rayon lumineux rentre dans l'ellipsoide
             [coll_bloc, coord] = TrajectoireDansEllispsoide(dep, point_col, nouveau_vdir, nin, nout);
 
             if (coll_bloc)
@@ -351,5 +351,5 @@ end
 %D: distance totale parcourue par le rayon
 %point: point composant l'image virtuelle
 function point = DeroulerRayon(p, u, D)
-    point = p + (u/norm(u)) * D;
+    point = p + (u/norm(u) * D);
 end
