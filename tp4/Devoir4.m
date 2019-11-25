@@ -339,15 +339,20 @@ function [reflexion, nouveau_vdir] = CalculerNouvelleTrajectoire(vdir, pcol, n1,
     vec_k = cross(vec_i, j_/norm(j_));
 
     theta1 = AngleEntreVecteurs(vdir, n);
-    theta2 = asind(n1/n2 * sind(theta1));
-    
-    res = abs(sind(theta2));
 
-    reflexion = res > 1;
+    reflexion = 0;
+
+    if (n1 > n2) 
+        thetac = asind(n2/n1);
+        if (theta1 <= thetac)
+            reflexion = 1;
+        end
+    end
     
     if (reflexion)
         nouveau_vdir = cosd(theta1)*vec_i + sind(theta1)*vec_k;
     else
+        theta2 = asind(n1/n2 * sind(theta1));
         nouveau_vdir = -cosd(theta2)*vec_i + sind(theta2)*vec_k;
     end
 end
